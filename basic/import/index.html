@@ -1,0 +1,24 @@
+<!-- This demo comes from https://www.html5rocks.com/en/tutorials/webcomponents/imports/ -->
+<head>
+  <link rel="import" href="warnings.html">
+</head>
+<body>
+  <pre>
+    var link = document.querySelector('link[rel="import"]');
+    var content = link.import;
+
+    // Grab DOM from warning.html's document.
+    var el = content.querySelector('.warning');
+
+    document.body.appendChild(el.cloneNode(true));
+  </pre>
+  <script>
+    var link = document.querySelector('link[rel="import"]');
+    var content = link.import;
+
+    // Grab DOM from warning.html's document.
+    var el = content.querySelector('.warning');
+
+    document.body.appendChild(el.cloneNode(true));
+  </script>
+</body>
