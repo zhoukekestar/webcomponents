@@ -1,0 +1,70 @@
+<style>
+  template-mini {
+    display: none;
+  }
+</style>
+<script>
+  (function(){
+    var proto = Object.create(HTMLTemplateElement.prototype);
+    var namespace = '_';
+    var fn = function(html) {
+      var code =  "var _p = [], print = Array.prototype.push.bind(_p); with(obj) { " +
+        "_p.push(`" +
+        html
+          .replace(/<!--[\s\S]*?-->/g, '') // Remove comments wrapped with <!--xxx-->
+          .replace(/\/\*[\s\S]*?\*\//g, '') // Remove comments wrapped with /*xxx*/
+
+          .replace(/[\r\n]/g, "\v")
+          .replace(/<%=(.*?)%>/g, function(a, b) {
+            return "`); _p.push(" + b.replace(/'/g, '`') + "); _p.push(`";
+          })
+          .replace(/<%(.*?)%>/g, function(a, b) {
+            return "<%" + b.replace(/'/g, '`') + "%>";
+          })
+          .replace(/<%/g, "`);")
+          .replace(/%>/g, "; _p.push(`") +
+        "`);}" +
+
+          // Fix bug
+        "return _p.join(``);";
+
+      code = code.replace(/'/g, "\\\'")
+      code = code.replace(/`/g, "'");
+      var fn = new Function('obj', code);
+      return {
+        fn: fn,
+        code: code
+      };
+    }
+
+    proto.modal = '';
+    function escape2Html(str) {
+      var arrEntities={'lt':'<','gt':'>','nbsp':' ','amp':'&','quot':'"'};
+      return str.replace(/&(lt|gt|nbsp|amp|quot);/ig,function(all,t){return arrEntities[t];});
+    }
+    proto.createdCallback  = function() {
+
+      this[namespace + 'innerHTML'] = escape2Html(this.innerHTML);
+
+      var fnRes = fn(this[namespace + 'innerHTML']);
+
+      this[namespace + 'fn'] = fnRes.fn;
+      this[namespace + 'code'] = fnRes.code;
+
+      if (this.modal) {
+        this.innerHTML = this[namespace + 'fn'](this.modal);
+        this.style.display = 'block';
+      }
+    }
+
+    proto.setModal = function(d) {
+      this.modal = d;
+      if (this.modal) {
+        this.innerHTML = this[namespace + 'fn'](this.modal);
+        this.style.display = 'block';
+      }
+    }
+
+    document.registerElement('template-mini', {prototype: proto});
+  })();
+</script>
