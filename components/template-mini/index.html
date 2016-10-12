@@ -1,3 +1,5 @@
+<!-- https://github.com/Polymer/TemplateBinding -->
+<!-- https://github.com/Polymer/TemplateBinding/blob/master/src/TemplateBinding.js -->
 <style>
   template-mini {
     display: none;
@@ -5,66 +7,113 @@
 </style>
 <script>
   (function(){
-    var proto = Object.create(HTMLTemplateElement.prototype);
-    var namespace = '_';
-    var fn = function(html) {
-      var code =  "var _p = [], print = Array.prototype.push.bind(_p); with(obj) { " +
-        "_p.push(`" +
-        html
-          .replace(/<!--[\s\S]*?-->/g, '') // Remove comments wrapped with <!--xxx-->
-          .replace(/\/\*[\s\S]*?\*\//g, '') // Remove comments wrapped with /*xxx*/
+    var proto = Object.create(HTMLElement.prototype)
+      , directive = [];
 
-          .replace(/[\r\n]/g, "\v")
-          .replace(/<%=(.*?)%>/g, function(a, b) {
-            return "`); _p.push(" + b.replace(/'/g, '`') + "); _p.push(`";
-          })
-          .replace(/<%(.*?)%>/g, function(a, b) {
-            return "<%" + b.replace(/'/g, '`') + "%>";
-          })
-          .replace(/<%/g, "`);")
-          .replace(/%>/g, "; _p.push(`") +
-        "`);}" +
+    directive.push({
+      name: 'z-repeat',
+      parseChildren: false,
+      handler: function(dom, expression, scope) {
+        try {
+          var parent = dom.parentNode;
+          dom.remove();
+          
+          // expression
+          var expression = expression.split(' in ');
+          expression = {
+            itemName: expression[0].trim(),
+            itemsName: 'scope.' + expression[1].trim()
+          }
+          expression.items = eval(expression.itemsName);
 
-          // Fix bug
-        "return _p.join(``);";
+          // repeat
+          for (var item in expression.items) {
+            var copyDom = dom.cloneNode(true);
+            copyDom.removeAttribute('z-repeat');
+            var copyScope = function() {
+              this[expression.itemName] = item;
+            }
+            copyScope.prototype = scope;
+            parent.appendChild(parseDom(copyDom, new copyScope()))
+          }
 
-      code = code.replace(/'/g, "\\\'")
-      code = code.replace(/`/g, "'");
-      var fn = new Function('obj', code);
-      return {
-        fn: fn,
-        code: code
-      };
-    }
+        } catch (e) {
+          console.warn('z-repeat ERROR:' + e)
+        }
+
+      }
+    })
+
+    directive.push({
+      name: 'z-if',
+      handler: function(dom, expression, scope) {
+        try {
+          if (eval('scope.' + expression)) {
+            dom.removeAttribute('z-if');
+            return true;
+          }
+        } catch (e) {
+          console.warn('z-if ERROR:' + e + ' on dom:');
+          console.warn(dom)
+        }
+        dom.remove();
+        return false;
+      }
+    })
 
     proto.modal = '';
-    function escape2Html(str) {
-      var arrEntities={'lt':'<','gt':'>','nbsp':' ','amp':'&','quot':'"'};
-      return str.replace(/&(lt|gt|nbsp|amp|quot);/ig,function(all,t){return arrEntities[t];});
-    }
-    proto.createdCallback  = function() {
 
-      this[namespace + 'innerHTML'] = escape2Html(this.innerHTML);
+    var parseDom = function(dom, scope) {
+      for (var i = 0; i < dom.children.length; i++) {
+        var currentElement = dom.children[i];
 
-      var fnRes = fn(this[namespace + 'innerHTML']);
+        // Parse Children flag
+        var parseChildren = true;
 
-      this[namespace + 'fn'] = fnRes.fn;
-      this[namespace + 'code'] = fnRes.code;
+        // Execute directive
+        for (var j = 0; j < directive.length; j++) {
+          var expression = currentElement.getAttribute(directive[j].name);
+          if (expression) {
 
-      if (this.modal) {
-        this.innerHTML = this[namespace + 'fn'](this.modal);
-        this.style.display = 'block';
+            if (directive[j].parseChildren === false)
+              parseChildren = false;
+
+            directive[j].handler(currentElement, expression, scope)
+          }
+        }
+
+        // Element has children. And parse children is true
+        if (currentElement.children && parseChildren) {
+          parseDom(currentElement, scope);
+        }
       }
+      if (dom.children.length === 0) {
+        dom.innerHTML = dom.innerHTML.replace(/{{(.*)}}/, function() {
+          return eval('scope.' + RegExp.$1);
+        })
+      }
+      return dom;
+    }
+
+    proto.createdCallback  = function() {
+      this._innerHTML = this.innerHTML;
+    }
+
+    proto.attachedCallback = function() {
+      console.log('hi')
     }
 
     proto.setModal = function(d) {
       this.modal = d;
-      if (this.modal) {
-        this.innerHTML = this[namespace + 'fn'](this.modal);
-        this.style.display = 'block';
-      }
+      this.style.display = 'none';
+      this.innerHTML = this._innerHTML;
+      parseDom(this, this.modal);
+      this.style.display = 'block';
     }
 
-    document.registerElement('template-mini', {prototype: proto});
+    document.registerElement('template-mini', {
+      prototype: proto,
+      // extends: 'script'
+    });
   })();
 </script>

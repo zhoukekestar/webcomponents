@@ -5,10 +5,22 @@
   <link rel="import" href="index.html">
 </head>
 <body>
-  <template-mini id='tmpl'>
-    <p><%=d%></p>
+
+  <template-mini id='tmplRepeat'>
+    <p>tmpl-repeat</p>
+    <ul>
+      <li z-repeat='item in items'>{{item}}</li>
+    </ul>
   </template-mini>
-  <button onclick="tmpl.setModal({d: 'hello template-mini'})">sayhi</button>
+
+  <button onclick='tmplRepeat.setModal({items: ["a", "b", "c"]})'>tmplRepeat</button>
+
+  <template-mini id='tmplIf'>
+    <p>tmpl-if</p>
+    <p z-if='show'>show is ture</p>
+    <p z-if='obj.test[0].enabled'>obj.test[0].enabled is ture</p>
+  </template-mini>
+  <button onclick='tmplIf.setModal({show: true})'>tmplIf true</button>
+  <button onclick='tmplIf.setModal({show: false, obj: {test: [{enabled: true}]}})'>tmplIf false</button>
 </body>
 </html>
-
