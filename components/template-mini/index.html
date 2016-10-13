@@ -10,6 +10,10 @@
     var proto = Object.create(HTMLElement.prototype)
       , directive = [];
 
+    // Modal
+    proto.modal = '';
+
+    // Directives: repeat
     directive.push({
       name: 'z-repeat',
       parseChildren: false,
@@ -45,6 +49,7 @@
       }
     })
 
+    // Directives: if
     directive.push({
       name: 'z-if',
       handler: function(dom, expression, scope) {
@@ -62,8 +67,12 @@
       }
     })
 
-    proto.modal = '';
 
+    /**
+     * Parse dom
+     *  dom: the dom you want to parse
+     *  scope: the data that will be used if some value shold be parsed
+     **/
     var parseDom = function(dom, scope) {
       for (var i = 0; i < dom.children.length; i++) {
         var currentElement = dom.children[i];
@@ -93,6 +102,7 @@
         try {
           var name = 'scope_' + Date.now();
           window[name] = scope;
+          // var value = eval("'use strict'; (function() {with(scope) { return " + arguments[1] + "}})() ");
           var value = eval('(function(scope) {with(scope) { return ' + arguments[1] + '}})(window["' + name + '"])');
           return value;
         } catch (e) {
@@ -103,6 +113,9 @@
       return dom;
     }
 
+    /*
+     * Save innerHTML to _innerHTML
+     */
     proto.createdCallback  = function() {
       this._innerHTML = this.innerHTML;
     }
@@ -111,6 +124,9 @@
 
     }
 
+    /**
+     * Set modal and apply it to dom.
+     **/
     proto.setModal = function(d) {
       this.modal = d;
       this.style.display = 'none';
@@ -120,8 +136,7 @@
     }
 
     document.registerElement('template-mini', {
-      prototype: proto,
-      // extends: 'script'
+      prototype: proto
     });
   })();
 </script>
