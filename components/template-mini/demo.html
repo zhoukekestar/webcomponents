@@ -9,12 +9,30 @@
   <template-mini id='tmplRepeat'>
     <p>tmpl-repeat</p>
     <ul>
-      <li z-repeat='item in items'>{{item}}</li>
+      <li z-repeat='item in items'>{{index}}: {{item}}</li>
     </ul>
+    <ul>
+      <li z-repeat='item2 in items2'>{{index}}: {{item2.name}}<span>{{item2.name}}</span></li>
+    </ul>
+    <p>{{person.name}}: {{person.address.country}} - {{person.address.province}}</p>
   </template-mini>
 
-  <button onclick='tmplRepeat.setModal({items: ["a", "b", "c"]})'>tmplRepeat</button>
-
+  <button onclick="repeat()">tmplRepeat</button>
+  <script>
+    var repeat = function() {
+      tmplRepeat.setModal({
+        items: ['a', 'b', 'c'],
+        items2: [{name: 'name-a'}, {name: 'name-b'}],
+        person: {
+          name: 'name',
+          address: {
+            country: 'china',
+            province: 'zhejiang'
+          }
+        }
+      })
+    }
+  </script>
   <template-mini id='tmplIf'>
     <p>tmpl-if</p>
     <p z-if='show'>show is ture</p>

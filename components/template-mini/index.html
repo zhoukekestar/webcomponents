@@ -17,7 +17,7 @@
         try {
           var parent = dom.parentNode;
           dom.remove();
-          
+
           // expression
           var expression = expression.split(' in ');
           expression = {
@@ -31,7 +31,8 @@
             var copyDom = dom.cloneNode(true);
             copyDom.removeAttribute('z-repeat');
             var copyScope = function() {
-              this[expression.itemName] = item;
+              this[expression.itemName] = expression.items[item];
+              this.index = item;
             }
             copyScope.prototype = scope;
             parent.appendChild(parseDom(copyDom, new copyScope()))
@@ -87,11 +88,18 @@
           parseDom(currentElement, scope);
         }
       }
-      if (dom.children.length === 0) {
-        dom.innerHTML = dom.innerHTML.replace(/{{(.*)}}/, function() {
-          return eval('scope.' + RegExp.$1);
-        })
-      }
+
+      dom.innerHTML = dom.innerHTML.replace(/{{(\S*?)}}/g, function() {
+        try {
+          var name = 'scope_' + Date.now();
+          window[name] = scope;
+          var value = eval('(function(scope) {with(scope) { return ' + arguments[1] + '}})(window["' + name + '"])');
+          return value;
+        } catch (e) {
+          return '';
+        }
+      })
+
       return dom;
     }
 
@@ -100,7 +108,7 @@
     }
 
     proto.attachedCallback = function() {
-      console.log('hi')
+
     }
 
     proto.setModal = function(d) {
