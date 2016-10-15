@@ -29,17 +29,20 @@
             itemsName: 'scope.' + expression[1].trim()
           }
           expression.items = eval(expression.itemsName);
-
+          
+          // The copy value.
+          var copyScope = function(index) {
+            this[expression.itemName] = expression.items[index];
+            this.index = index;
+          }
+          copyScope.prototype = scope;
+          
           // repeat
-          for (var item in expression.items) {
+          for (var index in expression.items) {
             var copyDom = dom.cloneNode(true);
             copyDom.removeAttribute('z-repeat');
-            var copyScope = function() {
-              this[expression.itemName] = expression.items[item];
-              this.index = item;
-            }
-            copyScope.prototype = scope;
-            parent.appendChild(parseDom(copyDom, new copyScope()))
+            
+            parent.appendChild(parseDom(copyDom, new copyScope(index)))
           }
 
         } catch (e) {
