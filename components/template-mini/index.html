@@ -69,6 +69,32 @@
         return false;
       }
     })
+    
+    // Directives: elseif
+    directive.push({
+      name: 'z-elseif',
+      handler: function(dom, expression, scope) {
+        try {
+          if (eval('scope.' + expression)) {
+            dom.removeAttribute('z-elseif');
+            return true;
+          }
+        } catch (e) {
+          console.warn('z-elseif ERROR:' + e + ' on dom:');
+          console.warn(dom)
+        }
+        dom.remove();
+        return false;
+      }
+    });
+    
+    // Directives: else
+    directive.push({
+      name: 'z-else',
+      handler: function(dom, expression, scope) {
+      
+      }
+    });
 
 
     /**
@@ -77,21 +103,46 @@
      *  scope: the data that will be used if some value shold be parsed
      **/
     var parseDom = function(dom, scope) {
+              
+      // Any `if` `elseif` directive return true, set this value to true.
+      var ifTrue = false;
+      var ifDirective = false;
+      
       for (var i = 0; i < dom.children.length; i++) {
         var currentElement = dom.children[i];
 
         // Parse Children flag
         var parseChildren = true;
-
+        
         // Execute directive
         for (var j = 0; j < directive.length; j++) {
-          var expression = currentElement.getAttribute(directive[j].name);
-          if (expression) {
+          
+          var currentDirective = directive[j].name;
+          var expression = currentElement.getAttribute(currentDirective);
+          
+          if (currentDirective === 'z-if' || currentDirective === 'z-elseif' || currentDirective === 'z-else') {
+            ifDirective = true;
+            ifTrue = false;
+          }
+            
+          
+          if (expression !== null) {
+            
+            // Any `if' `elseif` return true, remove current dom.
+            if (ifTrue && ifDirective ) {
+              dom.remove();
+              
+            } else {
+              
+              if (directive[j].parseChildren === false)
+                parseChildren = false;
 
-            if (directive[j].parseChildren === false)
-              parseChildren = false;
-
-            directive[j].handler(currentElement, expression, scope)
+              var returnValue = directive[j].handler(currentElement, expression, scope);
+              if (ifDirective) {
+                ifTrue = returnValue;
+              }
+            }
+                        
           }
         }
 
