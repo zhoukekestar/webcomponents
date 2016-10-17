@@ -1,0 +1,201 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mocha Tests</title>
+  <link href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css" rel="stylesheet" />
+  <link rel="import" href="index.html">
+  <style>
+    body template-mini {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="mocha"></div>
+
+  <!-- <script src="https://cdn.rawgit.com/jquery/jquery/2.1.4/dist/jquery.min.js"></script>
+  <script src="https://cdn.rawgit.com/Automattic/expect.js/0.3.1/index.js"></script>
+  <script src="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.js"></script> -->
+  <script src="../../lib/test/jquery.min.js"></script>
+  <script src="../../lib/test/index.js"></script>
+  <script src="../../lib/test/mocha.js"></script>
+
+  <div id='repeat'>
+    <template-mini class='simple'>
+      <ul><li z-repeat='item in items'>{{item}}</li></ul>
+    </template-mini>
+    <template-mini class='index'>
+      <ul><li z-repeat='item in items'>{{index}}</li></ul>
+    </template-mini>
+    <template-mini class='object'>
+      <ul><li z-repeat='item in items'>{{item.name}}</li></ul>
+    </template-mini>
+    <template-mini class='object2'>
+      <ul><li z-repeat='item in items'>{{name0}}<span>{{item.name1}}<span>{{item.name2.name3}}</span></span></li></ul>
+    </template-mini>
+  </div>
+
+  <div id="if">
+    <template-mini class='if'>
+      <span z-if='show'>show</span>
+    </template-mini>
+    <template-mini class='if-deep'>
+      <span z-if='show.arr[1].isTrue'>show</span>
+    </template-mini>
+
+    <template-mini class='if-expression1'>
+      <span z-if='true'>true</span>
+      <span z-else>false</span>
+    </template-mini>
+    <template-mini class='if-expression2'>
+      <span z-if='"a" !== "a"'>true</span>
+      <span z-else>false</span>
+    </template-mini>
+
+
+    <template-mini class='else'>
+      <span z-if='show'>show is true</span>
+      <span z-else>show is false</span>
+    </template-mini>
+
+    <template-mini class='elseif'>
+      <span z-if='name === "a"'>name is a</span>
+      <span z-elseif='name === "b"'>name is b</span>
+      <span z-else>name is else</span>
+    </template-mini>
+
+    <template-mini class='if-else-if'>
+      <span z-if='show'>show</span>
+      <span z-else>!show</span>
+      <span z-if='name'>{{name}}</span>
+      <span z-else>name is null</span>
+    </template-mini>
+  </div>
+
+  <script>mocha.setup('bdd')</script>
+  <script>
+    var describe = window.describe
+      , it = window.it
+      , expect = window.expect;
+
+    var getHTML = function(selector, modal) {
+      var dom = document.querySelector(selector);
+      dom.setModal(modal);
+      return dom.innerHTML.trim();
+    }
+  </script>
+  <script>
+    describe('z-repeat', function () {
+      describe('Simple Array', function () {
+        it("{items: ['a', 'b', 'c']}", function () {
+
+          expect(getHTML('#repeat template-mini.simple', {items: ['a', 'b', 'c']}))
+            .to.eql('<ul><li>a</li><li>b</li><li>c</li></ul>')
+        });
+      });
+      describe('index', function () {
+        it("index should be start with 0", function () {
+
+          expect(getHTML('#repeat template-mini.index', {items: ['a', 'b', 'c']}))
+            .to.eql('<ul><li>0</li><li>1</li><li>2</li></ul>')
+        });
+      });
+      describe('Object Array', function () {
+        it("Simple Object Array.", function () {
+
+          expect(getHTML('#repeat template-mini.object', {items: [{name: 'a'}, {name: 'b'}, {name: 'c'}]}))
+            .to.eql('<ul><li>a</li><li>b</li><li>c</li></ul>')
+        });
+        it("Object Array(Deep set)", function () {
+          expect(getHTML('#repeat template-mini.object2', {name0: 'name00', items: [{name1: 'a', name2: {name3: 'aa'}}, {name1: 'b', name2: {name3: 'bb'}}, {name1: 'c', name2: {name3: 'cc'}}]}))
+            .to.eql('<ul><li>name00<span>a<span>aa</span></span></li><li>name00<span>b<span>bb</span></span></li><li>name00<span>c<span>cc</span></span></li></ul>')
+        });
+      });
+    });
+
+  </script>
+  <script>
+    describe('z-if', function() {
+
+      describe("z-if", function() {
+        it('Simple if', function() {
+          expect(getHTML('#if .if', {show: true}))
+            .to.eql('<span>show</span>')
+
+          expect(getHTML('#if .if', {show: false}))
+            .to.eql('')
+
+          expect(getHTML('#if .if', {}))
+            .to.eql('')
+
+        })
+
+        it('deep-if', function() {
+
+          expect(getHTML('#if .if-deep', {show: {arr: [{}, {isTrue: true}]}}))
+            .to.eql('<span>show</span>')
+
+          expect(getHTML('#if .if-deep', {show: {arr: [{}, {isTrue: false}]}}))
+            .to.eql('')
+
+          expect(getHTML('#if .if-deep', {}))
+            .to.eql('')
+        })
+
+        it('if-expression', function() {
+
+          expect(getHTML('#if .if-expression1', {}))
+            .to.eql('<span>true</span>')
+
+          expect(getHTML('#if .if-expression2', {}))
+            .to.eql('<span>false</span>')
+        })
+      })
+
+      describe('z-else', function() {
+        it('Simple else', function() {
+          expect(getHTML('#if .else', {show: true}))
+            .to.eql('<span>show is true</span>')
+
+          expect(getHTML('#if .else', {show: false}))
+            .to.eql('<span>show is false</span>')
+        })
+      })
+
+      describe('z-elseif', function() {
+        it('different name', function() {
+          expect(getHTML('#if .elseif', {name: 'a'}))
+            .to.eql('<span>name is a</span>')
+
+          expect(getHTML('#if .elseif', {name: 'b'}))
+            .to.eql('<span>name is b</span>')
+
+          expect(getHTML('#if .elseif', {name: 'c'}))
+            .to.eql('<span>name is else</span>')
+        })
+        it('if-else-if', function() {
+
+          expect(getHTML('#if .if-else-if', {show: true}))
+            .to.eql('<span>show</span>\n      \n      \n      <span>name is null</span>')
+
+          expect(getHTML('#if .if-else-if', {show: false}))
+            .to.eql('<span>!show</span>\n      \n      <span>name is null</span>')
+
+          expect(getHTML('#if .if-else-if', {show: true, name: 'a'}))
+            .to.eql('<span>show</span>\n      \n      <span>a</span>')
+
+          expect(getHTML('#if .if-else-if', {show: false, name: 'a'}))
+            .to.eql('<span>!show</span>\n      <span>a</span>')
+
+        })
+
+      })
+    })
+  </script>
+  <script>
+    // mocha.checkLeaks();
+    // mocha.globals(['jQuery']);
+    mocha.run();
+  </script>
+</body>
+</html>
