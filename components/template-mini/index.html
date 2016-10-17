@@ -29,19 +29,19 @@
             itemsName: 'scope.' + expression[1].trim()
           }
           expression.items = eval(expression.itemsName);
-          
+
           // The copy value.
           var copyScope = function(index) {
             this[expression.itemName] = expression.items[index];
             this.index = index;
           }
           copyScope.prototype = scope;
-          
+
           // repeat
           for (var index in expression.items) {
             var copyDom = dom.cloneNode(true);
             copyDom.removeAttribute('z-repeat');
-            
+
             parent.appendChild(parseDom(copyDom, new copyScope(index)))
           }
 
@@ -57,7 +57,18 @@
       name: 'z-if',
       handler: function(dom, expression, scope) {
         try {
-          if (eval('scope.' + expression)) {
+          var _name = 'scope_' + Date.now();
+          window[_name] = scope;
+
+          var value = null;
+
+          try {
+            value = eval('(function(scope) {delete window[' + _name + ']; with(scope) { return ' + expression + '}})(window["' + _name + '"])');
+          } catch (e) {
+            value = null;
+          }
+
+          if (value) {
             dom.removeAttribute('z-if');
             return true;
           }
@@ -69,13 +80,18 @@
         return false;
       }
     })
-    
+
     // Directives: elseif
     directive.push({
       name: 'z-elseif',
       handler: function(dom, expression, scope) {
         try {
-          if (eval('scope.' + expression)) {
+          var _name = 'scope_' + Date.now();
+          window[_name] = scope;
+
+          var value = eval('(function(scope) {delete window[' + _name + ']; with(scope) { return ' + expression + '}})(window["' + _name + '"])');
+
+          if (value) {
             dom.removeAttribute('z-elseif');
             return true;
           }
@@ -87,12 +103,13 @@
         return false;
       }
     });
-    
+
     // Directives: else
     directive.push({
       name: 'z-else',
       handler: function(dom, expression, scope) {
-      
+        dom.removeAttribute('z-else')
+        return true;
       }
     });
 
@@ -103,52 +120,66 @@
      *  scope: the data that will be used if some value shold be parsed
      **/
     var parseDom = function(dom, scope) {
-              
+
       // Any `if` `elseif` directive return true, set this value to true.
-      var ifTrue = false;
-      var ifDirective = false;
-      
-      for (var i = 0; i < dom.children.length; i++) {
+      var isLastIfDirectiveEqualTrue = false;
+      var isIfDirective = false
+        , isElseDirective = false;
+
+      for (var i = 0; i < dom.children.length; ) {
         var currentElement = dom.children[i];
 
         // Parse Children flag
         var parseChildren = true;
-        
+        var isIfDirective = false
+          , isElseDirective = false
+          , elementRemoved = false;
+
         // Execute directive
         for (var j = 0; j < directive.length; j++) {
-          
+
           var currentDirective = directive[j].name;
           var expression = currentElement.getAttribute(currentDirective);
-          
-          if (currentDirective === 'z-if' || currentDirective === 'z-elseif' || currentDirective === 'z-else') {
-            ifDirective = true;
-            ifTrue = false;
-          }
-            
-          
+
+          // Get current expression
           if (expression !== null) {
-            
-            // Any `if' `elseif` return true, remove current dom.
-            if (ifTrue && ifDirective ) {
-              dom.remove();
-              
+
+            if (currentDirective === 'z-if') {
+              isIfDirective = true;
+              isLastIfDirectiveEqualTrue = false;
+            } else if (currentDirective === 'z-elseif' || currentDirective === 'z-else') {
+              isElseDirective = true;
             } else {
-              
-              if (directive[j].parseChildren === false)
-                parseChildren = false;
+              isLastIfDirectiveEqualTrue = false;
+            }
+
+            // Any `if' `elseif` return true, remove current dom.
+            if (isLastIfDirectiveEqualTrue && isElseDirective ) {
+              currentElement.remove();
+              elementRemoved = true;
+
+            } else {
+
+              parseChildren = directive[j].parseChildren === false ? false : true;
 
               var returnValue = directive[j].handler(currentElement, expression, scope);
-              if (ifDirective) {
-                ifTrue = returnValue;
+              if ((isIfDirective || isElseDirective) && returnValue) {
+                isLastIfDirectiveEqualTrue = returnValue;
               }
+              elementRemoved = currentElement.parentNode === null ? true : false;
             }
-                        
+
+            break;
           }
         }
 
         // Element has children. And parse children is true
-        if (currentElement.children && parseChildren) {
+        if (currentElement.children && currentElement.children.length > 0 && parseChildren) {
           parseDom(currentElement, scope);
+        }
+
+        if (!elementRemoved) {
+          i++;
         }
       }
 
@@ -158,6 +189,9 @@
           window[name] = scope;
           // var value = eval("'use strict'; (function() {with(scope) { return " + arguments[1] + "}})() ");
           var value = eval('(function(scope) {with(scope) { return ' + arguments[1] + '}})(window["' + name + '"])');
+          setTimeout(function(){
+            delete window[name];
+          }, 100)
           return value;
         } catch (e) {
           return '';

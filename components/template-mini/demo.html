@@ -5,7 +5,7 @@
   <link rel="import" href="index.html">
 </head>
 <body>
-
+  <p>Simple Unit Test is <a href="./test.html">here.</a></p>
   <template-mini id='tmplRepeat'>
     <p>tmpl-repeat</p>
     <ul>
@@ -15,6 +15,7 @@
       <li z-repeat='item2 in items2'>{{index}}: {{item2.name}}<span>{{item2.name}}</span></li>
     </ul>
     <p>{{person.name}}: {{person.address.country}} - {{person.address.province}} <small>{{person.address.time}}</small></p>
+
   </template-mini>
 
   <button onclick="repeat()">tmplRepeat</button>
@@ -37,9 +38,13 @@
   <template-mini id='tmplIf'>
     <p>tmpl-if</p>
     <p z-if='show'>show is ture</p>
+    <p z-else>show is false</p>
     <p z-if='obj.test[0].enabled'>obj.test[0].enabled is ture</p>
+    <p z-if='name == "a"'>a is awesome</p>
+    <p z-elseif='name === "b"'>b is interesting</p>
+    <p z-else>your name is good..</p>
   </template-mini>
-  <button onclick='tmplIf.setModal({show: true})'>tmplIf true</button>
+  <button onclick='tmplIf.setModal({show: true, name:"a"})'>tmplIf true</button>
   <button onclick='tmplIf.setModal({show: false, obj: {test: [{enabled: true}]}})'>tmplIf false</button>
 </body>
 </html>
