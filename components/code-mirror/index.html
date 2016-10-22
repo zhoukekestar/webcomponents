@@ -1,0 +1,92 @@
+<link rel="stylesheet" href="./codemirror.css">
+<link rel="stylesheet" href="./index.css" />
+<link rel="stylesheet" href="./material.css" />
+<link rel="stylesheet" href="./addon/hint/show-hint.css" />
+
+<script src='./codemirror.js'></script>
+<script src='./xml.js'></script>
+<script src='./javascript.js'></script>
+<script src='./css.js'></script>
+<script src='./htmlmixed.js'></script>
+<script src='./sublime.js'></script>
+<script src='./addon/search/search.js'></script>
+<script src='./addon/search/searchcursor.js'></script>
+<script src='./addon/search/match-highlighter.js'></script>
+<script src='./addon/hint/anyword-hint.js'></script>
+<script src='./addon/hint/css-hint.js'></script>
+<script src='./addon/hint/javascript-hint.js'></script>
+<script src='./addon/hint/html-hint.js'></script>
+<script src='./addon/hint/xml-hint.js'></script>
+<script src='./addon/hint/show-hint.js'></script>
+
+<script>
+!(function() {
+  var proto = Object.create(HTMLTextAreaElement.prototype);
+  var mixedMode = {
+    name: "htmlmixed",
+    scriptTypes: [{matches: /\/x-handlebars-template|\/x-mustache/i,
+                   mode: null},
+                  {matches: /(text|application)\/(x-)?vb(a|script)/i,
+                   mode: "vbscript"}]
+  };
+  var timeout;
+  var keyupHandler = function(cm, event) {
+    var key = event.keyCode || event.which;
+    // key == [a-z\.<]
+    // console.log(key)
+    if(
+      (
+        key > 64 && key < 91 && event.ctrlKey === false ||   // a~z
+        key === 190 && event.shiftKey === false || // .
+        key === 188 && event.shiftKey === true // <
+      )
+      && !cm.state.completionActive)
+    {
+        if(timeout) clearTimeout(timeout);
+        timeout = setTimeout(function() {
+
+            // @see http://stackoverflow.com/questions/19520877/codemirror-use-multiple-hint-sources-for-autocomplete
+            var doc = cm.getDoc();
+            var POS = doc.getCursor();
+            var mode = CodeMirror.innerMode(cm.getMode(), cm.getTokenAt(POS).state).mode.name;
+
+            // console.log(mode)
+
+            if (mode == 'xml') { //html depends on xml
+                CodeMirror.showHint(cm, CodeMirror.hint.html, {completeSingle: false});
+            } else if (mode == 'javascript') {
+                CodeMirror.showHint(cm, CodeMirror.hint.javascript, {completeSingle: false});
+            } else if (mode == 'css') {
+                CodeMirror.showHint(cm, CodeMirror.hint.css, {completeSingle: false});
+            }
+
+        }, 150);
+    }
+  }
+  proto.createdCallback = function() {
+    var that = this;
+    setTimeout(function() {
+
+      var cm = CodeMirror.fromTextArea(that, {
+        value: that.value,
+        lineNumbers: true,
+        mode: mixedMode,
+        keyMap: "sublime",
+        tabSize: 2
+      });
+
+      cm.setOption("theme", 'material');
+
+      // @see http://stackoverflow.com/questions/13744176/codemirror-autocomplete-after-any-keyup
+      cm.on('keyup', keyupHandler);
+
+    }, 0)
+
+  }
+
+  var XFooExtended = document.registerElement('code-mirror', {
+    prototype: proto,
+    extends: 'textarea'
+  });
+})();
+</script>
