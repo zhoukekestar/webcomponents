@@ -21,5 +21,4 @@ I love components, But I just tired with kinds of components.
 * [W3C](http://w3c.github.io/webcomponents/spec/custom/), [hello-world.html](https://github.com/webcomponents/hello-world-element/blob/master/hello-world.html)
 * [webcomponents.org](http://webcomponents.org/)
 
-# Basic Usage
-* [Demo](https://zhoukekestar.github.io/webcomponents/basic/index.html)
+# [Try it now online!](https://zhoukekestar.github.io/webcomponents/)
