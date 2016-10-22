@@ -2,13 +2,120 @@
 <html>
 <head>
   <title>Webcompontents</title>
+  <link rel="import" href="./components/x-slider/index.html">
+  <link rel="import" href="./components/template-mini/index.html">
+  <link rel="import" href="./components/code-mirror/index.html">
+  <style>
+  h1 {
+    text-align: center;
+    margin: 40px 0;
+  }
+  h1 img {
+    height: 1.5em;
+  }
+  .preview {
+    display: table;
+    width: 100%;
+    margin: 20px 0;
+  }
+  .preview .demo,
+  .preview .textarea {
+    width: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    height: 300px;
+    vertical-align: middle;
+    padding: 0 20px;
+  }
+  .preview textarea {
+    height: 100%;
+    width: 100%;
+  }
+  x-slider.swiper-container {
+    margin: 0 auto;
+  }
+  .preview .repeat.demo template-mini {
+    max-width: 500px;
+    margin: 0 auto;
+    display: block;
+    background: #fff;
+    height: 300px;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  </style>
 </head>
 <body>
+  <h1>
+    Can you image that you can actually do this on your Chrome !!! Just now !
+    <a href="https://github.com/zhoukekestar/webcomponents" class="github">
+		  <img class="github" src="https://g.alicdn.com/mtb/lab-zikuan/0.1.1/weex/github.png" alt="github">
+	  </a>
+  </h1>
+  <p style='text-align: center;'>No Polyfill <small>(Of course, Chrome-Only)</small>. You can try <a href="./basic/index.html">basic usage</a>, OR try <a href="./components/index.html">components</a>.</p>
 
-  <ul>
-    <li><a href="./basic/index.html">basic usage</a></li>
-    <li><a href="./components/index.html">components</a></li>
-  </ul>
+  <div class="preview">
+    <div class="demo repeat">
+
+      <template-mini data-modal='{"items": [1, 2, 3]}'>
+        <p z-repeat='item in items'>item {{item}}</p>
+      </template-mini>
+    </div>
+    <div class="textarea">
+      <textarea is='code-mirror'>
+<link rel="import" href="./components/template-mini/index.html">
+<template-mini data-modal='{"items": [1, 2, 3]}'>
+  <p z-repeat='item in items'>item {{item}}</p>
+</template-mini>
+      </textarea>
+    </div>
+  </div>
+
+  <div class="preview">
+    <div class="demo">
+      <x-slider>
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">Slide 1</div>
+          <div class="swiper-slide">Slide 2</div>
+          <div class="swiper-slide">Slide 3</div>
+        </div>
+      </x-slider>
+    </div>
+    <div class="textarea">
+      <textarea is='code-mirror'>
+<link rel="import" href="./components/x-slider/index.html">
+<x-slider>
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">Slide 1</div>
+    <div class="swiper-slide">Slide 2</div>
+    <div class="swiper-slide">Slide 3</div>
+  </div>
+</x-slider>
+      </textarea>
+    </div>
+  </div>
+
+  <div class="preview">
+
+    <div class="demo">
+      <x-slider>
+        <template-mini data-modal='{"slides": [1, 2, 3]}' class='swiper-wrapper'>
+            <div class="swiper-slide" z-repeat='slide in slides'>Slide {{slide}}</div>
+        </template-mini>
+      </x-slider>
+    </div>
+    <div class="textarea">
+      <textarea is='code-mirror'>
+<link rel="import" href="./components/x-slider/index.html">
+<link rel="import" href="./components/template-mini/index.html">
+<x-slider>
+  <template-mini data-modal='{"slides": [1, 2, 3]}' class='swiper-wrapper'>
+      <div class="swiper-slide" z-repeat='slide in slides'>Slide {{slide}}</div>
+  </template-mini>
+</x-slider>
+      </textarea>
+    </div>
+  </div>
 
 </body>
 </html>
