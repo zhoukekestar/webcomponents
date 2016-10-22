@@ -1,7 +1,7 @@
 <!-- https://github.com/Polymer/TemplateBinding -->
 <!-- https://github.com/Polymer/TemplateBinding/blob/master/src/TemplateBinding.js -->
 <style>
-  template-mini {
+  template-mini:unresolved {
     display: none;
   }
 </style>
@@ -206,6 +206,15 @@
      */
     proto.createdCallback  = function() {
       this._innerHTML = this.innerHTML;
+      this.style.display = 'none';
+      try {
+        if (this.dataset.modal) {
+          this.setModal(JSON.parse(this.dataset.modal))
+        }
+      } catch (e) {
+        console.warn(this)
+        console.warn('Abolve element has invalid modal')
+      }
     }
 
     proto.attachedCallback = function() {
@@ -217,10 +226,11 @@
      **/
     proto.setModal = function(d) {
       this.modal = d;
-      this.style.display = 'none';
+      this.style.display  = 'none';
       this.innerHTML = this._innerHTML;
       parseDom(this, this.modal);
-      this.style.display = 'block';
+      this.style.display = '';
+      this.dispatchEvent(new Event('template-mini-updated', {bubbles: true}));
     }
 
     document.registerElement('template-mini', {

@@ -5,7 +5,11 @@
   <link rel="import" href="index.html">
 </head>
 <body>
-  <p>Simple Unit Test is <a href="./test.html">here.</a></p>
+  <p>Simple Unit Test is
+    <template-mini data-modal='{"items": [1, 2, 3, 4, 5, 6, 7, 8]}'>
+      <a href="./test.html" z-repeat='i in items' style='margin-right: 10px;'>here.</a>
+    </template-mini>
+  </p>
   <template-mini id='tmplRepeat'>
     <p>tmpl-repeat</p>
     <ul>
