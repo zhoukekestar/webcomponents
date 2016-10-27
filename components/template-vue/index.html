@@ -26,7 +26,6 @@
         if (data) {
           try {
             data.remove();
-            this.appendChild(data);
             data = eval('(' + data.innerHTML + ')');
           } catch (e) {
             console.log(data);

@@ -7,10 +7,21 @@
 <body>
   <template-vue id='templateVue'>
     <script type='data'>
-      {msg: 'hello'}
+      {
+        msg: 'hello',
+        todos: [
+          { text: 'Learn JavaScript' },
+          { text: 'Learn Vue' },
+          { text: 'Build something awesome' }
+        ]
+      }
     </script>
     <span>Message: {{ msg }}</span>
+    <ul>
+      <li v-for='todo in todos'>{{todo.text}}</li>
+    </ul>
     <button onclick='templateVue.data.msg = "changed!";'>Change Msg</button>
+    <button onclick='templateVue.data.todos.push({text: "New Task"})'>New Task</button>
   </template-vue>
 
 </body>
