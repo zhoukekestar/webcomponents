@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>template-mini demo</title>
+  <link rel="import" href="index.html">
+</head>
+<body>
+  <template-vue id='templateVue'>
+    <script type='data'>
+      {msg: 'hello'}
+    </script>
+    <span>Message: {{ msg }}</span>
+    <button onclick='templateVue.data.msg = "changed!";'>Change Msg</button>
+  </template-vue>
+
+</body>
+</html>
