@@ -140,7 +140,6 @@
             if (prev._ifarr[i]) {
               dom._remove = true;
               dom._if = false;
-
               dom._ifarr = prev._ifarr;
               dom._ifarr.push(false);
               return;
@@ -163,19 +162,11 @@
      **/
     var parseDom = function(dom, scope) {
 
-      // Any `if` `elseif` directives return true, set this value to true.
-      var isLastIfDirectiveEqualTrue = false;
-      // var isIfDirective = false
-      //   , isElseDirective = false;
-
       for (var i = 0; i < dom.children.length; i++) {
         var currentElement = dom.children[i];
 
         // Parse Children flag
         var parseChildren = true;
-        // var isIfDirective = false
-        //   , isElseDirective = false
-        //   , elementRemoved = false;
 
         // Execute directives
         for (var j = 0; j < directives.length; j++) {
@@ -185,34 +176,8 @@
 
           // Get current expression
           if (expression !== null) {
-
-            // if (currentDirective === 'z-if') {
-            //   isIfDirective = true;
-            //   isLastIfDirectiveEqualTrue = false;
-            // } else if (currentDirective === 'z-elseif' || currentDirective === 'z-else') {
-            //   isElseDirective = true;
-            // } else {
-            //   isLastIfDirectiveEqualTrue = false;
-            // }
-
-            // Any `if' `elseif` return true, remove current dom.
-            // if (isLastIfDirectiveEqualTrue && isElseDirective ) {
-            //   currentElement.remove();
-            //   elementRemoved = true;
-            //
-            // } else {
-
-              parseChildren = parseChildren && directives[j].parseChildren === false ? false : true;
-
-              // var returnValue =
-              directives[j].handler(currentElement, expression, scope);
-              // if ((isIfDirective || isElseDirective) && returnValue) {
-              //   isLastIfDirectiveEqualTrue = returnValue;
-              // }
-              // elementRemoved = currentElement.parentNode === null ? true : false;
-            // }
-
-            break;
+            parseChildren = parseChildren && directives[j].parseChildren === false ? false : true;
+            directives[j].handler(currentElement, expression, scope);
           }
         }
 
@@ -220,10 +185,6 @@
         if (currentElement.children && currentElement.children.length > 0 && parseChildren && currentElement._remove !== true) {
           parseDom(currentElement, scope);
         }
-
-        // if (!elementRemoved) {
-        //   i++;
-        // }
       }
 
       // Remove the node that _remove is true
@@ -233,7 +194,7 @@
         }
       }
 
-
+      // parse text expression
       dom.innerHTML = dom.innerHTML.replace(/{{(\S*?)}}/g, function() {
         try {
           return getExpressionValue(scope, arguments[1]);
