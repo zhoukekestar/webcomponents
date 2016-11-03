@@ -8,13 +8,17 @@
 <script>
   (function(){
     var proto = Object.create(HTMLElement.prototype)
-      , directive = [];
+      , directives = []
+
+    var getExpressionValue = function (scope, expression) {
+      return (new Function('with (this) {  return ' + expression + '}')).call(scope);
+    }
 
     // Modal
     proto.modal = '';
 
     // Directives: repeat
-    directive.push({
+    directives.push({
       name: 'z-repeat',
       parseChildren: false,
       handler: function(dom, expression, scope) {
@@ -26,44 +30,40 @@
           var expression = expression.split(' in ');
           expression = {
             itemName: expression[0].trim(),
-            itemsName: 'scope.' + expression[1].trim()
+            items: getExpressionValue(scope, expression[1].trim())
           }
-          expression.items = eval(expression.itemsName);
-
-          // The copy value.
-          var copyScope = function(index) {
-            this[expression.itemName] = expression.items[index];
-            this.index = index;
-          }
-          copyScope.prototype = scope;
 
           // repeat
           for (var index in expression.items) {
             var copyDom = dom.cloneNode(true);
             copyDom.removeAttribute('z-repeat');
 
-            parent.appendChild(parseDom(copyDom, new copyScope(index)))
+            scope[expression.itemName] = expression.items[index];
+            scope.index = +index;
+            parent.appendChild(parseDom(copyDom, scope))
           }
+          delete scope.index;
+          delete scope[expression.itemName];
 
         } catch (e) {
-          console.warn('z-repeat ERROR:' + e)
+          console.warn('z-repeat ERROR:' + e);
+          console.warn(dom);
         }
 
       }
     })
 
     // Directives: if
-    directive.push({
+    directives.push({
       name: 'z-if',
       handler: function(dom, expression, scope) {
         var value = null;
 
         try {
-          var f = new Function('with(this) { return ' + expression + '}');
-          value = f.call(scope);
+          value = getExpressionValue(scope, expression);
         } catch (e) {
           console.warn('z-if ERROR:' + e + ' on dom:');
-          console.warn(dom)
+          console.warn(dom);
         }
 
         if (value) {
@@ -76,15 +76,13 @@
     })
 
     // Directives: elseif
-    directive.push({
+    directives.push({
       name: 'z-elseif',
       handler: function(dom, expression, scope) {
         var value = null;
 
         try {
-          var f = new Function('with(this) { return ' + expression + '}');
-          value = f.call(scope);
-
+          value = getExpressionValue(scope, expression);
         } catch (e) {
           console.warn('z-elseif ERROR:' + e + ' on dom:');
           console.warn(dom)
@@ -100,7 +98,7 @@
     });
 
     // Directives: else
-    directive.push({
+    directives.push({
       name: 'z-else',
       handler: function(dom, expression, scope) {
         dom.removeAttribute('z-else')
@@ -116,7 +114,7 @@
      **/
     var parseDom = function(dom, scope) {
 
-      // Any `if` `elseif` directive return true, set this value to true.
+      // Any `if` `elseif` directives return true, set this value to true.
       var isLastIfDirectiveEqualTrue = false;
       var isIfDirective = false
         , isElseDirective = false;
@@ -130,10 +128,10 @@
           , isElseDirective = false
           , elementRemoved = false;
 
-        // Execute directive
-        for (var j = 0; j < directive.length; j++) {
+        // Execute directives
+        for (var j = 0; j < directives.length; j++) {
 
-          var currentDirective = directive[j].name;
+          var currentDirective = directives[j].name;
           var expression = currentElement.getAttribute(currentDirective);
 
           // Get current expression
@@ -155,9 +153,9 @@
 
             } else {
 
-              parseChildren = directive[j].parseChildren === false ? false : true;
+              parseChildren = directives[j].parseChildren === false ? false : true;
 
-              var returnValue = directive[j].handler(currentElement, expression, scope);
+              var returnValue = directives[j].handler(currentElement, expression, scope);
               if ((isIfDirective || isElseDirective) && returnValue) {
                 isLastIfDirectiveEqualTrue = returnValue;
               }
@@ -180,15 +178,9 @@
 
       dom.innerHTML = dom.innerHTML.replace(/{{(\S*?)}}/g, function() {
         try {
-          var name = 'scope_' + Date.now();
-          window[name] = scope;
-          // var value = eval("'use strict'; (function() {with(scope) { return " + arguments[1] + "}})() ");
-          var value = eval('(function(scope) {with(scope) { return ' + arguments[1] + '}})(window["' + name + '"])');
-          setTimeout(function(){
-            delete window[name];
-          }, 100)
-          return value;
+          return getExpressionValue(scope, arguments[1]);
         } catch (e) {
+          console.warn(e);
           return '';
         }
       })
@@ -210,10 +202,6 @@
         console.warn(this)
         console.warn('Abolve element has invalid modal')
       }
-    }
-
-    proto.attachedCallback = function() {
-
     }
 
     /**
