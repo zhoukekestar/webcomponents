@@ -56,25 +56,19 @@
     directive.push({
       name: 'z-if',
       handler: function(dom, expression, scope) {
+        var value = null;
+
         try {
-          var _name = 'scope_' + Date.now();
-          window[_name] = scope;
-
-          var value = null;
-
-          try {
-            value = eval('(function(scope) {delete window[' + _name + ']; with(scope) { return ' + expression + '}})(window["' + _name + '"])');
-          } catch (e) {
-            value = null;
-          }
-
-          if (value) {
-            dom.removeAttribute('z-if');
-            return true;
-          }
+          var f = new Function('with(this) { return ' + expression + '}');
+          value = f.call(scope);
         } catch (e) {
           console.warn('z-if ERROR:' + e + ' on dom:');
           console.warn(dom)
+        }
+
+        if (value) {
+          dom.removeAttribute('z-if');
+          return true;
         }
         dom.remove();
         return false;
@@ -85,19 +79,20 @@
     directive.push({
       name: 'z-elseif',
       handler: function(dom, expression, scope) {
+        var value = null;
+
         try {
-          var _name = 'scope_' + Date.now();
-          window[_name] = scope;
+          var f = new Function('with(this) { return ' + expression + '}');
+          value = f.call(scope);
 
-          var value = eval('(function(scope) {delete window[' + _name + ']; with(scope) { return ' + expression + '}})(window["' + _name + '"])');
-
-          if (value) {
-            dom.removeAttribute('z-elseif');
-            return true;
-          }
         } catch (e) {
           console.warn('z-elseif ERROR:' + e + ' on dom:');
           console.warn(dom)
+        }
+
+        if (value) {
+          dom.removeAttribute('z-elseif');
+          return true;
         }
         dom.remove();
         return false;
