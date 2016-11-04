@@ -249,13 +249,19 @@
      * Set modal and apply it to dom.
      **/
     proto.setModal = function(d) {
-      this.modal = d;
+
       this.style.display  = 'none';
+      this.modal = d;
       this.innerHTML = this._innerHTML;
+
+      this.beforeUpdate && this.beforeUpdate.call(this.modal);
+
       parseDom(this, this.modal);
-      this.style.display = '';
+
       this.dispatchEvent(new Event('template-mini-updated', {bubbles: true}));
       this.updated && this.updated();
+      this.style.display = '';
+      
     }
 
     document.registerElement('template-mini', {
