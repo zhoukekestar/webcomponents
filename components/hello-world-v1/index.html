@@ -1,0 +1,43 @@
+<style>
+  hello-world-v1 {
+    height: 100px;
+    width: 300px;
+    margin: 100px auto;
+    display: block;
+    background: rgba(224, 224, 224, 0.35);
+    text-align: center;
+    line-height: 100px;
+    cursor: pointer;
+  }
+  hello-world-v1[red] {
+    color: #f00;
+  }
+</style>
+<script>
+  "use strict";
+  !(function() {
+    class HelloWorldV1 extends HTMLElement {
+      constructor() {
+        super();
+
+        this.addEventListener('click', e => {
+          this.red = !this.red;
+        })
+      }
+
+      get red() {
+        return this.hasAttribute('red')
+      }
+
+      set red(val) {
+        if (val) {
+          this.setAttribute('red', '');
+        } else {
+          this.removeAttribute('red');
+        }
+      }
+    }
+
+    customElements.define('hello-world-v1', HelloWorldV1);
+  })();
+</script>

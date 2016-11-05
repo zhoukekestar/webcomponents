@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>hello-world</title>
+    <link rel="import" href="./index.html">
+  </head>
+  <body>
+    <center id="tip"></center>
+    <hello-world-v1>Click me to change color to red.</hello-world-v1>
+    <script>
+      var version = (version = navigator.userAgent.match(/Chrome\/(\d*)/)) && version[1];
+      if (version) {
+        if (+version < 54) {
+          alert('Your Chrome is out-of-date, Please update your Chrome.')
+          tip.innerHTML = 'Your Chrome is out-of-date, Please update your Chrome.';
+        } else {
+          tip.innerHTML = 'Your Chrome is Great. And you can click the block.'
+        }
+      } else {
+        alert('Please use Chrome.')
+        tip.innerHTML = 'Please use Chrome.';
+      }
+    </script>
+  </body>
+</html>
