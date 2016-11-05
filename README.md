@@ -2,6 +2,7 @@
 * [imports](https://www.html5rocks.com/en/tutorials/webcomponents/imports/)
 * [customelements](https://www.html5rocks.com/en/tutorials/webcomponents/customelements/)
 * [template](https://www.html5rocks.com/en/tutorials/webcomponents/template/)
+* [customelements v1](https://developers.google.com/web/fundamentals/getting-started/primers/customelements)
 
 
 # Chorme-Only maybe not so that bad.
@@ -12,7 +13,7 @@ There are some scenes can be uesed. So we can use The Last HTML5 Specification.
 
 # Why we should write components with W3C ?
 
-I love components, But I just tired with kinds of components.
+I love components, But I just tired with kinds of components. `W3C` > `Polymer` > `Others`.
 
 * [VUE](http://vuejs.org/guide/single-file-components.html)
 * [WEEX](http://alibaba.github.io/weex/doc/syntax/composed-component.html)
