@@ -13,7 +13,7 @@ There are some scenes can be uesed. So we can use The Last HTML5 Specification.
 
 # Why we should write components with W3C ?
 
-I love components, But I just tired with kinds of components. `W3C` > `Polymer` > `Others`.
+I love components, But I just tired with kinds of components.  `W3C` > `Polymer` > `Others`.
 
 * [VUE](http://vuejs.org/guide/single-file-components.html)
 * [WEEX](http://alibaba.github.io/weex/doc/syntax/composed-component.html)
