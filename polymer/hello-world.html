@@ -1,0 +1,40 @@
+<link rel="import" href="./polymer-1.7.0/polymer.html">
+
+<dom-module id="hello-world">
+  <template>
+    <style>
+      :host {
+        display: block;
+        color: #ccc;
+      }
+      :host i {
+        color: #000;
+      }
+    </style>
+    <h2>Hello <i>[[name]]</i> !</h2>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'hello-world',
+
+      properties: {
+        name: {
+          type: String,
+          value: 'World',
+        },
+      },
+
+      attachedCallback: function() {
+
+        this.onclick = this.goPolymer;
+      },
+
+      goPolymer: function(e) {
+        confirm('Do you want to see the docs?') && (location.href = 'https://www.polymer-project.org/');
+      }
+
+    });
+  </script>
+</dom-module>
