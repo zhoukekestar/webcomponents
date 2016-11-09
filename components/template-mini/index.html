@@ -167,14 +167,14 @@
         var currentNode = dom.childNodes[i];
 
         if (currentNode.nodeName === '#text') {
-          currentNode.replaceWith(currentNode.textContent.replace(/{{(\S*?)}}/g, function() {
+          currentNode.textContent = currentNode.textContent.replace(/{{(\S*?)}}/g, function() {
             try {
               return getExpressionValue(scope, arguments[1]);
             } catch (e) {
               console.warn(e);
               return '';
             }
-          }))
+          })
           continue;
         }
 
@@ -243,6 +243,7 @@
         console.warn(this)
         console.warn('Abolve element has invalid modal')
       }
+
     }
 
     /**
@@ -261,7 +262,7 @@
       this.dispatchEvent(new Event('template-mini-updated', {bubbles: true}));
       this.updated && this.updated();
       this.style.display = '';
-      
+
     }
 
     document.registerElement('template-mini', {
