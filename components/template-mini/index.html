@@ -4,6 +4,9 @@
   template-mini:unresolved {
     display: none;
   }
+  template-mini.hide {
+    display: none !important;
+  }
 </style>
 <script>
   (function(){
@@ -234,7 +237,7 @@
      */
     proto.createdCallback  = function() {
       this._innerHTML = this.innerHTML;
-      this.style.display = 'none';
+      this.classList.add('hide');
       try {
         if (this.dataset.modal) {
           this.setModal(JSON.parse(this.dataset.modal))
@@ -251,18 +254,16 @@
      **/
     proto.setModal = function(d) {
 
-      this.style.display  = 'none';
+      this.classList.add('hide');
       this.modal = d;
       this.innerHTML = this._innerHTML;
-
       this.beforeUpdate && this.beforeUpdate.call(this.modal);
 
       parseDom(this, this.modal);
 
       this.dispatchEvent(new Event('template-mini-updated', {bubbles: true}));
-      this.updated && this.updated();
-      this.style.display = '';
-
+      this.afterUpdate && this.afterUpdate();
+      this.classList.remove('hide')
     }
 
     document.registerElement('template-mini', {
