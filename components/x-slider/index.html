@@ -39,34 +39,32 @@
 </style>
 <script>
   (function(){
-    var script = document.currentScript.ownerDocument.querySelector('#x-slider-swiper-min-js');
-    script.onload = function() {
+    
+    var proto = Object.create(HTMLElement.prototype);
 
-      var proto = Object.create(HTMLElement.prototype);
+    proto.createdCallback = function() {
 
-      proto.createdCallback = function() {
+      this.classList.add('swiper-container');
 
-        this.classList.add('swiper-container');
+      !(function(that){
+        setTimeout(function() {
+          that.swiper = new Swiper(that);
+        }, 1000);
+      })(this);
 
+      this.addEventListener('template-mini-updated', function() {
         !(function(that){
           setTimeout(function() {
             that.swiper = new Swiper(that);
           }, 1000);
         })(this);
-
-        this.addEventListener('template-mini-updated', function() {
-          !(function(that){
-            setTimeout(function() {
-              that.swiper = new Swiper(that);
-            }, 1000);
-          })(this);
-        })
-      }
-
-      document.registerElement('x-slider', {
-        prototype: proto
-      });
-
+      })
     }
+
+    document.registerElement('x-slider', {
+      prototype: proto
+    });
+
+
   })();
 </script>

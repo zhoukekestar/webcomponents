@@ -17,9 +17,24 @@ I love components, But I just tired with kinds of components.  `W3C` > `Polymer`
 
 * [VUE](http://vuejs.org/guide/single-file-components.html)
 * [WEEX](http://alibaba.github.io/weex/doc/syntax/composed-component.html)
-* [Polymer](https://github.com/Polymer/polymer) , [webcomponentsjs](https://github.com/webcomponents/webcomponentsjs), [hello-world-polymer.html](https://github.com/webcomponents/hello-world-polymer/blob/master/hello-world.html)
+* [Polymer](https://github.com/Polymer/polymer) , [hello-world-polymer.html](https://github.com/webcomponents/hello-world-polymer/blob/master/hello-world.html)
 * [skatejs](https://github.com/skatejs/skatejs)
 * [W3C](http://w3c.github.io/webcomponents/spec/custom/), [hello-world.html](https://github.com/webcomponents/hello-world-element/blob/master/hello-world.html)
 * [webcomponents.org](http://webcomponents.org/)
 
 # [Try it online!](https://zhoukekestar.github.io/webcomponents/)
+
+# webcomponents-polyfill (polyfill for Firefox, IE11)
+* [webcomponentsjs](https://github.com/webcomponents/webcomponentsjs)
+* [Do not use document.currentScript](https://github.com/webcomponents/webcomponentsjs#currentscript)
+* Do not use your [named element](https://html.spec.whatwg.org/multipage/browsers.html#named-access-on-the-window-object) without query.
+```
+<div id='foo'></div>
+
+// Do not use this code, you will get false on Firefox or Old-Chrome with expression:
+// document.querySelector('#foo') === foo  ====> false
+<script>console.log(document.querySelector('#foo') === foo)</script>   
+
+// This code is fine.
+<script>var foo = document.getElementById('foo'); console.log(foo.id); </script>
+```
