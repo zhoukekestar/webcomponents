@@ -1,8 +1,11 @@
 <!-- https://github.com/Polymer/TemplateBinding -->
 <!-- https://github.com/Polymer/TemplateBinding/blob/master/src/TemplateBinding.js -->
 <style>
-  template-mini:unresolved {
+  template-mini {
     display: none;
+  }
+  template-mini[resolved] {
+    display: block;
   }
   template-mini.hide {
     display: none !important;
@@ -19,6 +22,146 @@
 
     // Modal
     proto.modal = '';
+
+    /*
+     * Save innerHTML to _innerHTML
+     */
+    proto.createdCallback  = function() {
+
+      this.classList.add('hide');
+      this.setAttribute('resolved', '');
+
+      var beforeUpdate = this.querySelector('script[type="text/beforeUpdate"]');
+      if (beforeUpdate && !this.beforeUpdate) {
+        beforeUpdate.remove();
+        this.beforeUpdate = (new Function(beforeUpdate.innerHTML)).bind(this);
+      }
+
+      var afterUpdate = this.querySelector('script[type="text/afterUpdate"]');
+      if (afterUpdate && !this.afterUpdate) {
+        afterUpdate.remove();
+        this.afterUpdate = (new Function(afterUpdate.innerHTML)).bind(this);
+      }
+
+      this._innerHTML = this.innerHTML;
+
+      try {
+        if (this.dataset.modal) {
+          this.setModal(JSON.parse(this.dataset.modal))
+        }
+      } catch (e) {
+        console.warn(this)
+        console.warn('Abolve element has invalid modal')
+      }
+    }
+
+    /**
+     * Set modal and apply it to dom.
+     **/
+    proto.setModal = function(d) {
+
+      this.classList.add('hide');
+      this.modal = d;
+      this.innerHTML = this._innerHTML;
+
+      this.beforeUpdate && this.beforeUpdate();
+
+      var wrapper = document.createElement('div');
+      wrapper.innerHTML = this._innerHTML;
+      this._doc = document.createDocumentFragment();
+      this._doc.appendChild(wrapper);
+      parseDom(wrapper, this.modal);
+
+      this.innerHTML = wrapper.innerHTML;
+      
+      this.dispatchEvent(new Event('template-mini-updated', {bubbles: true}));
+      this.afterUpdate && this.afterUpdate();
+      this.classList.remove('hide')
+    }
+
+    proto.attributeChangedCallback = function() {
+
+    }
+
+    document.registerElement('template-mini', {
+      prototype: proto
+    });
+
+
+    /**
+     * Parse dom
+     *  dom: the dom you want to parse
+     *  scope: the data that will be used if some value shold be parsed
+     **/
+    var parseDom = function(dom, scope) {
+
+      for (var i = 0; i < dom.childNodes.length; i++) {
+
+        var currentNode = dom.childNodes[i];
+
+        if (currentNode.nodeName === '#text') {
+          currentNode.textContent = currentNode.textContent.replace(/{{(\S*?)}}/g, function() {
+            try {
+              return getExpressionValue(scope, arguments[1]);
+            } catch (e) {
+              console.warn(e);
+              return '';
+            }
+          })
+          continue;
+        }
+
+        // Parse Children flag
+        var parseChildren = true;
+
+        // Execute directives
+        for (var j = 0; j < directives.length; j++) {
+
+          var currentDirective = directives[j].name;
+          var expression = currentNode.getAttribute(currentDirective);
+
+          // Get current expression
+          if (expression !== null) {
+            parseChildren = parseChildren && directives[j].parseChildren === false ? false : true;
+            directives[j].handler(currentNode, expression, scope);
+          }
+        }
+
+        // Element has children. And parseChildren is true (default is true)
+        if (currentNode.childNodes && currentNode.childNodes.length > 0 && parseChildren && currentNode._remove !== true) {
+          parseDom(currentNode, scope);
+        }
+
+      }
+
+
+      /*
+       * Remove the node that _remove is true.
+       *   You should not remove node in your directive handler, because the (children.length) will be (children.length - 1) if you remove it.
+       *   So we have a _remove flag to remove it after index the children.
+       */
+      for (var i = dom.children.length - 1; i >= 0; i--) {
+        if (dom.children[i]._remove === true) {
+          dom.children[i].remove();
+        }
+      }
+
+      // parse expression in attributes
+      for (var i = 0; i < dom.attributes.length; i++) {
+
+        dom.attributes[i].value = dom.attributes[i].value.replace(/{{(\S*?)}}/g, function() {
+          try {
+            return getExpressionValue(scope, arguments[1]);
+          } catch (e) {
+            console.warn(e);
+            return '';
+          }
+        })
+      }
+
+      return dom;
+    }
+
 
     // Directives: repeat
     directives.push({
@@ -157,117 +300,5 @@
       }
     });
 
-
-    /**
-     * Parse dom
-     *  dom: the dom you want to parse
-     *  scope: the data that will be used if some value shold be parsed
-     **/
-    var parseDom = function(dom, scope) {
-
-      for (var i = 0; i < dom.childNodes.length; i++) {
-
-        var currentNode = dom.childNodes[i];
-
-        if (currentNode.nodeName === '#text') {
-          currentNode.textContent = currentNode.textContent.replace(/{{(\S*?)}}/g, function() {
-            try {
-              return getExpressionValue(scope, arguments[1]);
-            } catch (e) {
-              console.warn(e);
-              return '';
-            }
-          })
-          continue;
-        }
-
-        // Parse Children flag
-        var parseChildren = true;
-
-        // Execute directives
-        for (var j = 0; j < directives.length; j++) {
-
-          var currentDirective = directives[j].name;
-          var expression = currentNode.getAttribute(currentDirective);
-
-          // Get current expression
-          if (expression !== null) {
-            parseChildren = parseChildren && directives[j].parseChildren === false ? false : true;
-            directives[j].handler(currentNode, expression, scope);
-          }
-        }
-
-        // Element has children. And parseChildren is true (default is true)
-        if (currentNode.childNodes && currentNode.childNodes.length > 0 && parseChildren && currentNode._remove !== true) {
-          parseDom(currentNode, scope);
-        }
-
-      }
-
-
-      /*
-       * Remove the node that _remove is true.
-       *   You should not remove node in your directive handler, because the (children.length) will be (children.length - 1) if you remove it.
-       *   So we have a _remove flag to remove it after index the children.
-       */
-      for (var i = dom.children.length - 1; i >= 0; i--) {
-        if (dom.children[i]._remove === true) {
-          dom.children[i].remove();
-        }
-      }
-
-      // parse expression in attributes
-      for (var i = 0; i < dom.attributes.length; i++) {
-
-        dom.attributes[i].value = dom.attributes[i].value.replace(/{{(\S*?)}}/g, function() {
-          try {
-            return getExpressionValue(scope, arguments[1]);
-          } catch (e) {
-            console.warn(e);
-            return '';
-          }
-        })
-      }
-
-      return dom;
-    }
-
-    /*
-     * Save innerHTML to _innerHTML
-     */
-    proto.createdCallback  = function() {
-      this._innerHTML = this.innerHTML;
-      this.classList.add('hide');
-      try {
-        if (this.dataset.modal) {
-          this.setModal(JSON.parse(this.dataset.modal))
-        }
-      } catch (e) {
-        console.warn(this)
-        console.warn('Abolve element has invalid modal')
-      }
-
-    }
-
-    /**
-     * Set modal and apply it to dom.
-     **/
-    proto.setModal = function(d) {
-
-      this.classList.add('hide');
-      this.modal = d;
-      this.innerHTML = this._innerHTML;
-      this.beforeUpdate && this.beforeUpdate.call(this.modal);
-
-      parseDom(this, this.modal);
-
-      this.dispatchEvent(new Event('template-mini-updated', {bubbles: true}));
-      this.afterUpdate && this.afterUpdate();
-      this.classList.remove('hide')
-    }
-
-    document.registerElement('template-mini', {
-      prototype: proto
-    });
   })();
 </script>
