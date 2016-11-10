@@ -2,6 +2,7 @@
 <head>
   <meta charset="utf-8">
   <title>Mocha Tests</title>
+  <script src='../../polymer/webcomponentsjs-0.7.23/webcomponents.js'></script>
   <link href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css" rel="stylesheet" />
   <link rel="import" href="index.html">
   <style>
@@ -115,6 +116,7 @@
 
   </script>
   <script>
+
     describe('z-if', function() {
 
       describe("z-if", function() {
@@ -195,7 +197,10 @@
   <script>
     // mocha.checkLeaks();
     // mocha.globals(['jQuery']);
-    mocha.run();
+
+    document.addEventListener('WebComponentsReady', function() {
+      mocha.run();
+    });
   </script>
 </body>
 </html>
