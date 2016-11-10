@@ -413,6 +413,12 @@
       if (this.hasAttribute('auto')) {
         this.submit();
       }
+
+      this.addEventListener('click', function(e) {
+        if (e.target.type === 'submit') {
+          this.submit();
+        }
+      })
     }
 
     proto.submit = function() {
