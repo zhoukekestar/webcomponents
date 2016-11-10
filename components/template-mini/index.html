@@ -34,7 +34,7 @@
       var beforeUpdate = this.querySelector('script[type="text/beforeUpdate"]');
       if (beforeUpdate && !this.beforeUpdate) {
         beforeUpdate.remove();
-        this.beforeUpdate = (new Function(beforeUpdate.innerHTML)).bind(this);
+        this.beforeUpdate = (new Function(beforeUpdate.innerHTML));
       }
 
       var afterUpdate = this.querySelector('script[type="text/afterUpdate"]');
@@ -64,7 +64,7 @@
       this.modal = d;
       this.innerHTML = this._innerHTML;
 
-      this.beforeUpdate && this.beforeUpdate();
+      this.beforeUpdate && this.beforeUpdate.call(this.modal, this);
 
       var wrapper = document.createElement('div');
       wrapper.innerHTML = this._innerHTML;
@@ -73,7 +73,7 @@
       parseDom(wrapper, this.modal);
 
       this.innerHTML = wrapper.innerHTML;
-      
+
       this.dispatchEvent(new Event('template-mini-updated', {bubbles: true}));
       this.afterUpdate && this.afterUpdate();
       this.classList.remove('hide')
@@ -100,7 +100,7 @@
         var currentNode = dom.childNodes[i];
 
         if (currentNode.nodeName === '#text') {
-          currentNode.textContent = currentNode.textContent.replace(/{{(\S*?)}}/g, function() {
+          currentNode.textContent = currentNode.textContent.replace(/{{(.*?)}}/g, function() {
             try {
               return getExpressionValue(scope, arguments[1]);
             } catch (e) {
