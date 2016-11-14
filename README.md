@@ -28,7 +28,7 @@ I love components, But I just tired with kinds of components.  `W3C` > `Polymer`
 * [webcomponentsjs](https://github.com/webcomponents/webcomponentsjs)
 * [Do not use document.currentScript](https://github.com/webcomponents/webcomponentsjs#currentscript)
 * Do not use your [named element](https://html.spec.whatwg.org/multipage/browsers.html#named-access-on-the-window-object) without query.
-```
+```html
 <div id='foo'></div>
 
 // Do not use this code, you will get false on Firefox or Old-Chrome with expression:
@@ -37,4 +37,13 @@ I love components, But I just tired with kinds of components.  `W3C` > `Polymer`
 
 // This code is fine.
 <script>var foo = document.getElementById('foo'); console.log(foo.id); </script>
+```
+* Do not use your `this` inline like this:
+```html
+// This code is bad as this == HTMLUnknoenElement on Old-Chrome, so you can't use your custom method or prop.
+// https://github.com/webcomponents/webcomponentsjs/issues/580
+<form-json id='form' onchange="this.submit()"></form-json>
+
+// This code is fine
+<form-json id='form' onchange="form.submit()"></form-json>
 ```
