@@ -8,7 +8,7 @@
 <body>
   <p>Simple Unit Test is
     <template-mini data-modal='{"items": [1, 2, 3, 4, 5, 6, 7, 8]}'>
-      <a href="./test.html" z-repeat='i in items' style='margin-right: 10px;'>here.</a>
+      <a href="./test.html" repeat='i in items' style='margin-right: 10px;'>here.</a>
     </template-mini>
   </p>
   <template-mini id='tmplRepeat'>
@@ -22,10 +22,10 @@
     </script>
     <p>tmpl-repeat</p>
     <ul>
-      <li z-repeat='item in items'>{{index}}: {{item}}</li>
+      <li repeat='item in items'>{{index}}: {{item}}</li>
     </ul>
     <ul>
-      <li z-repeat='item2 in items2'>{{convert1(convert0(index))}}: {{item2.name}} <span>{{item2.name}}</span> </li>
+      <li repeat='item2 in items2'>{{convert1(convert0(index))}}: {{item2.name}} <span>{{item2.name}}</span> </li>
     </ul>
     <p data-preson='{{person.name}}' data-country='country: {{person.address.country}}'>{{person.name}}: {{person.address.country}} - {{person.address.province}} <small>{{person.address.time}}</small></p>
 
@@ -54,12 +54,12 @@
   </script>
   <template-mini id='tmplIf'>
     <p>tmpl-if</p>
-    <p z-if='show'>show is ture</p>
-    <p z-else>show is false</p>
-    <p z-if='obj.test[0].enabled'>obj.test[0].enabled is ture</p>
-    <p z-if='name == "a"'>a is awesome</p>
-    <p z-elseif='name === "b"'>b is interesting</p>
-    <p z-else>your name is good..</p>
+    <p if='show'>show is ture</p>
+    <p else>show is false</p>
+    <p if='obj.test[0].enabled'>obj.test[0].enabled is ture</p>
+    <p if='name == "a"'>a is awesome</p>
+    <p elseif='name === "b"'>b is interesting</p>
+    <p else>your name is good..</p>
   </template-mini>
   <button onclick='tmplIf.setModal({show: true, name:"a"})'>tmplIf true</button>
   <button onclick='tmplIf.setModal({show: false, obj: {test: [{enabled: true}]}})'>tmplIf false</button>

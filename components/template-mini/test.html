@@ -23,53 +23,53 @@
 
   <div id='repeat'>
     <template-mini class='simple'>
-      <ul><li z-repeat='item in items'>{{item}}</li></ul>
+      <ul><li repeat='item in items'>{{item}}</li></ul>
     </template-mini>
     <template-mini class='index'>
-      <ul><li z-repeat='item in items'>{{index}}</li></ul>
+      <ul><li repeat='item in items'>{{index}}</li></ul>
     </template-mini>
     <template-mini class='object'>
-      <ul><li z-repeat='item in items'>{{item.name}}</li></ul>
+      <ul><li repeat='item in items'>{{item.name}}</li></ul>
     </template-mini>
     <template-mini class='object2'>
-      <ul><li z-repeat='item in items'>{{name0}}<span>{{item.name1}}<span>{{item.name2.name3}}</span></span></li></ul>
+      <ul><li repeat='item in items'>{{name0}}<span>{{item.name1}}<span>{{item.name2.name3}}</span></span></li></ul>
     </template-mini>
   </div>
 
   <div id="if">
     <template-mini class='if'>
-      <span z-if='show'>show</span>
+      <span if='show'>show</span>
     </template-mini>
     <template-mini class='if-deep'>
-      <span z-if='show.arr[1].isTrue'>show</span>
+      <span if='show.arr[1].isTrue'>show</span>
     </template-mini>
 
     <template-mini class='if-expression1'>
-      <span z-if='true'>true</span>
-      <span z-else>false</span>
+      <span if='true'>true</span>
+      <span else>false</span>
     </template-mini>
     <template-mini class='if-expression2'>
-      <span z-if='"a" !== "a"'>true</span>
-      <span z-else>false</span>
+      <span if='"a" !== "a"'>true</span>
+      <span else>false</span>
     </template-mini>
 
 
     <template-mini class='else'>
-      <span z-if='show'>show is true</span>
-      <span z-else>show is false</span>
+      <span if='show'>show is true</span>
+      <span else>show is false</span>
     </template-mini>
 
     <template-mini class='elseif'>
-      <span z-if='name === "a"'>name is a</span>
-      <span z-elseif='name === "b"'>name is b</span>
-      <span z-else>name is else</span>
+      <span if='name === "a"'>name is a</span>
+      <span elseif='name === "b"'>name is b</span>
+      <span else>name is else</span>
     </template-mini>
 
     <template-mini class='if-else-if'>
-      <span z-if='show'>show</span>
-      <span z-else>!show</span>
-      <span z-if='name'>{{name}}</span>
-      <span z-else>name is null</span>
+      <span if='show'>show</span>
+      <span else>!show</span>
+      <span if='name'>{{name}}</span>
+      <span else>name is null</span>
     </template-mini>
   </div>
 
@@ -86,7 +86,7 @@
     }
   </script>
   <script>
-    describe('z-repeat', function () {
+    describe('repeat', function () {
       describe('Simple Array', function () {
         it("{items: ['a', 'b', 'c']}", function () {
 
@@ -117,9 +117,9 @@
   </script>
   <script>
 
-    describe('z-if', function() {
+    describe('if', function() {
 
-      describe("z-if", function() {
+      describe("if", function() {
         it('Simple if', function() {
           expect(getHTML('#if .if', {show: true}))
             .to.eql('<span>show</span>')
@@ -154,7 +154,7 @@
         })
       })
 
-      describe('z-else', function() {
+      describe('else', function() {
         it('Simple else', function() {
           expect(getHTML('#if .else', {show: true}))
             .to.eql('<span>show is true</span>')
@@ -164,7 +164,7 @@
         })
       })
 
-      describe('z-elseif', function() {
+      describe('elseif', function() {
         it('different name', function() {
           expect(getHTML('#if .elseif', {name: 'a'}))
             .to.eql('<span>name is a</span>')

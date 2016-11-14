@@ -12,7 +12,7 @@
   }
 </style>
 <script>
-  (function(){
+  !(function(){
     var proto = Object.create(HTMLElement.prototype)
       , directives = []
 
@@ -165,7 +165,7 @@
 
     // Directives: repeat
     directives.push({
-      name: 'z-repeat',
+      name: 'repeat',
       parseChildren: false,
       handler: function(dom, expression, scope) {
         try {
@@ -189,7 +189,7 @@
 
             // Clone template node
             var cloneNode = dom.cloneNode(true);
-            cloneNode.removeAttribute('z-repeat');
+            cloneNode.removeAttribute('repeat');
 
             // Set new scope
             scope[expression.itemName] = expression.items[index];
@@ -203,7 +203,7 @@
           delete scope[expression.itemName];
 
         } catch (e) {
-          console.warn('z-repeat ERROR:' + e);
+          console.warn('repeat ERROR:' + e);
           console.warn(dom);
         }
 
@@ -212,19 +212,19 @@
 
     // Directives: if
     directives.push({
-      name: 'z-if',
+      name: 'if',
       handler: function(dom, expression, scope) {
         var value = null;
 
         try {
           value = getExpressionValue(scope, expression);
         } catch (e) {
-          console.warn('z-if ERROR:' + e + ' on dom:');
+          console.warn('if ERROR:' + e + ' on dom:');
           console.warn(dom);
         }
 
         if (value) {
-          dom.removeAttribute('z-if');
+          dom.removeAttribute('if');
           dom._if = true;
           dom._ifarr = [true];
           return true;
@@ -238,7 +238,7 @@
 
     // Directives: elseif
     directives.push({
-      name: 'z-elseif',
+      name: 'elseif',
       handler: function(dom, expression, scope) {
         var value = null;
         var prev = dom.previousElementSibling;
@@ -259,12 +259,12 @@
         try {
           value = getExpressionValue(scope, expression);
         } catch (e) {
-          console.warn('z-elseif ERROR:' + e + ' on dom:');
+          console.warn('elseif ERROR:' + e + ' on dom:');
           console.warn(dom)
         }
 
         if (value) {
-          dom.removeAttribute('z-elseif');
+          dom.removeAttribute('elseif');
           prev && prev._ifarr && (dom._ifarr = prev._ifarr) && dom._ifarr.push(true) ;
           dom._if = true;
           return true;
@@ -278,7 +278,7 @@
 
     // Directives: else
     directives.push({
-      name: 'z-else',
+      name: 'else',
       handler: function(dom, expression, scope) {
         var prev = dom.previousElementSibling;
         if (prev && prev._ifarr) {
@@ -295,7 +295,7 @@
 
         dom._if = true;
         prev && prev._ifarr && (dom._ifarr = prev._ifarr) && dom._ifarr.push(true);
-        dom.removeAttribute('z-else')
+        dom.removeAttribute('else')
         return true;
       }
     });
