@@ -149,7 +149,7 @@
       // parse expression in attributes
       for (var i = 0; i < dom.attributes.length; i++) {
 
-        dom.attributes[i].value = dom.attributes[i].value.replace(/{{(\S*?)}}/g, function() {
+        dom.attributes[i].value = dom.attributes[i].value.replace(/{{(.*?)}}/g, function() {
           try {
             return getExpressionValue(scope, arguments[1]);
           } catch (e) {
