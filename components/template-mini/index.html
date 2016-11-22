@@ -87,6 +87,20 @@
       prototype: proto
     });
 
+    // parse expression in attributes
+    var parseDomAttribute = function(dom, scope) {
+      for (var i = 0; i < dom.attributes.length; i++) {
+
+        dom.attributes[i].value = dom.attributes[i].value.replace(/{{(.*?)}}/g, function() {
+          try {
+            return getExpressionValue(scope, arguments[1]);
+          } catch (e) {
+            console.warn(e);
+            return '';
+          }
+        })
+      }
+    }
 
     /**
      * Parse dom
@@ -130,6 +144,8 @@
         // Element has children. And parseChildren is true (default is true)
         if (currentNode.childNodes && currentNode.childNodes.length > 0 && parseChildren && currentNode._remove !== true) {
           parseDom(currentNode, scope);
+        } else {
+          parseDomAttribute(currentNode, scope);
         }
 
       }
@@ -146,18 +162,7 @@
         }
       }
 
-      // parse expression in attributes
-      for (var i = 0; i < dom.attributes.length; i++) {
-
-        dom.attributes[i].value = dom.attributes[i].value.replace(/{{(.*?)}}/g, function() {
-          try {
-            return getExpressionValue(scope, arguments[1]);
-          } catch (e) {
-            console.warn(e);
-            return '';
-          }
-        })
-      }
+      parseDomAttribute(dom, scope);
 
       return dom;
     }
