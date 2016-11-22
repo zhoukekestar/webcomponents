@@ -1,0 +1,128 @@
+<script src='//cdn.bootcss.com/Chart.js/2.4.0/Chart.min.js'></script>
+<script>
+  !(function() {
+    var proto = Object.create(HTMLElement.prototype);
+
+    var getLineStyle = function(n) {
+      n = n > 3 ? 3 : n;
+
+      var styles = [
+        {
+          fill: false,
+          strokeColor: "rgba(151,187,205,1)",
+          pointColor: "rgba(151,187,205,1)",
+          pointStrokeColor: "#fff",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(151,187,205,1)",
+        },
+        {
+          fill: false,
+          backgroundColor: "rgba(255,99,132,0.2)",
+          borderColor: "rgba(255,99,132,1)",
+          pointBackgroundColor: "rgba(255,99,132,1)",
+          pointBorderColor: "#fff",
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: "rgba(255,99,132,1)",
+        },
+        {
+          fill: false,
+          backgroundColor: "rgba(225,206,86,0.2)",
+          borderColor: "rgba(225,206,86,1)",
+          pointBackgroundColor: "rgba(225,206,86,1)",
+          pointBorderColor: "#fff",
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: "rgba(225,206,86,1)",
+        },
+        {
+          fill: false,
+          backgroundColor: "rgba(54,162,235,0.2)",
+          borderColor: "rgba(54,162,235,1)",
+          pointBackgroundColor: "rgba(54,162,235,1)",
+          pointBorderColor: "#fff",
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: "rgba(54,162,235,1)",
+        },
+      ];
+
+      return JSON.parse(JSON.stringify(styles[n])); // return a copy of style, not just reference.
+    }
+
+    var applyStyle = function(data) {
+
+      var datasets = data.datasets;
+      for (var i = 0; i < datasets.length; i++) {
+        var config = getLineStyle(i);
+        for (var k in datasets[i]) {
+          config[k] = datasets[i][k]
+        }
+        datasets[i] = config;
+      }
+
+      return data;
+    }
+
+    proto.createdCallback = function() {
+
+      this.style.display = 'block'
+
+      var wrapper = document.createElement('div');
+      var canvas = document.createElement('canvas');
+      canvas.style.display = 'block';
+      wrapper.appendChild(canvas);
+      this.appendChild(wrapper)
+      this.canvas = canvas;
+
+      var data = this.getAttribute('data');
+      data = data && JSON.parse(data) || {};
+
+      var options = this.getAttribute('options');
+      options = options && JSON.parse(options) || {};
+
+      var type = this.getAttribute('type') || 'line';
+
+      setTimeout((function() {
+
+        applyStyle(data);
+
+        this.data = data;
+        this.options = options;
+        this.type = type;
+
+        this.chart = new Chart(canvas.getContext('2d'), {
+          type: type,
+          data: data,
+          options: options
+        })
+
+      }).bind(this), 20);
+
+    }
+
+    proto.setData = function(data) {
+      this.data = data;
+      this.chart.data = this.data;
+      applyStyle(this.chart.data);
+      this.chart.update();
+    }
+
+    proto.attributeChangedCallback = function(name, oldVal, newVal) {
+
+      if (name === 'data') {
+        this.data = JSON.parse(newVal);
+        this.chart.data = this.data;
+        applyStyle(this.chart.data);
+      } else if (name === 'options') {
+        this.options = JSON.parse(newVal);
+        this.chart.options = this.options;
+      } else if (name === 'type') {
+        this.type = newVal;
+        this.chart.type = this.type;
+      }
+      this.chart.update();
+    }
+
+    document.registerElement('chart-js', {
+      prototype: proto
+    })
+  })();
+</script>
