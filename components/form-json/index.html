@@ -9,7 +9,7 @@
           result.push({ name: name, value: value })
         };
 
-      [].slice.apply(this.elements || this.querySelectorAll('input,textarea')).forEach(function(field) {
+      [].slice.apply(this.elements || this.querySelectorAll('input,select,textarea')).forEach(function(field) {
 
         type = field.type, name = field.name
         if (name && field.nodeName.toLowerCase() !== 'fieldset' &&
@@ -403,8 +403,10 @@
 
     proto.createdCallback = function() {
 
-      if (this.dataset.template) {
-        this._template = document.querySelector(this.dataset.template);
+      // Support data-template or template
+      var template = this.dataset.template || this.getAttribute('template');
+      if (template) {
+        this._template = document.querySelector(template);
         this.onended = function(d) {
           this._template && this._template.setModal && this._template.setModal(d);
         }
