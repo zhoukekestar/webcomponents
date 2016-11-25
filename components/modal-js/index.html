@@ -1,0 +1,124 @@
+<style>
+  modal-js {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.36);
+    z-index: 10002;
+    transition: all .3s;
+    opacity: 0;
+  }
+
+  modal-js.show {
+    opacity: 1;
+  }
+
+  modal-js .modal-js-dialog {
+    width: 600px;
+    background: #fff;
+    margin: 50px auto 0;
+    border-radius: 3px;
+    top: -200px;
+    position: relative;
+    transition: all .5s;
+    padding: 15px;
+  }
+
+  modal-js.big .modal-js-dialog {
+    width: 898px;
+  }
+
+  modal-js.small .modal-js-dialog {
+    width: 298px;
+  }
+
+  modal-js.show .modal-js-dialog {
+    top: 0;
+  }
+
+  modal-js .modal-js-dialog header,
+  modal-js .modal-js-dialog footer {
+    padding: 15px 15px 30px 15px;
+    font-size: 18px;
+    box-sizing: border-box;
+    margin: -15px;
+    position: relative;
+  }
+
+  modal-js .modal-js-dialog header:after,
+  modal-js .modal-js-dialog footer:after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 15px;
+    height: 1px;
+    background: #e5e5e5;
+    width: 100%;
+    left: 0;
+  }
+
+  modal-js .modal-js-dialog footer {
+    padding: 30px 15px 15px 15px;
+    text-align: right;
+  }
+
+  modal-js .modal-js-dialog footer:after {
+    top: 15px;
+  }
+
+</style>
+
+<script>
+  !(function() {
+    var proto = Object.create(HTMLElement.prototype);
+
+    proto.createdCallback = function() {
+      var wrapper = document.createElement('div');
+      wrapper.classList.add('modal-js-dialog');
+
+      while (this.children.length > 0) {
+        wrapper.appendChild(this.children[0]);
+      }
+
+      this.appendChild(wrapper);
+      this.dialog = wrapper;
+
+      this.addEventListener('click', function(e) {
+        if (e.target.nodeName === 'BUTTON' && (e.target.hasAttribute('close') || e.target.hasAttribute('hide'))) {
+          this.hide();
+        }
+      });
+    }
+
+    proto.show = function(data) {
+
+      var template = this.querySelector('template-mini');
+      if (template && template.setModal) {
+        template.setModal(data);
+      }
+
+      this.style.display = 'block';
+      setTimeout((function() {
+        this.classList.add('show');
+      }).bind(this), 20);
+    }
+
+    proto.hide = function() {
+      this.classList.remove('show');
+      setTimeout((function() {
+        this.style.display = 'none';
+      }).bind(this), 500);
+    }
+
+    proto.close = proto.hide;
+
+    document.registerElement('modal-js', {
+      prototype: proto
+    })
+
+  })();
+
+</script>

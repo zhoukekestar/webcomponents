@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>modal-js</title>
+    <link rel="import" href="../template-mini/index.html">
+    <link rel="import" href="./index.html">
+  </head>
+  <body>
+    <modal-js id='modal-1'>
+      <header>title</header>
+      <p>hello World</p>
+      <footer>
+        <button hide>hide</button>
+      </footer>
+    </modal-js>
+    <button onclick='document.querySelector("#modal-1").show()'>show</button>
+
+    <modal-js class='big' id='modal-2'>
+      <template-mini>
+        <header>{{title}}</header>
+        <p>name:{{name}}</p>
+        <p>close it: <button close>close</button></p>
+
+      </template-mini>
+    </modal-js>
+    <button onclick='document.querySelector("#modal-2").show({"name": "modal-js", "title": "show with modal"})'>show with modal</button>
+  </body>
+</html>
