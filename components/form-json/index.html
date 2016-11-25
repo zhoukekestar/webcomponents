@@ -148,6 +148,17 @@
     var submitHandler = function(e, options, action) {
 
       var self = this;
+
+      // We cna't observe the attributes if set its value directly
+      // So change it if value is not equal to attribute.
+      if (self.action && self.action !== self.getAttribute('action')) {
+        self.setAttribute('action', self.action)
+      }
+
+      if (self.method && self.method !== self.getAttribute('method')) {
+        self.setAttribute('method', self.method);
+      }
+
       var method = self.getAttribute('method') || 'POST';
       var res;
 
@@ -423,11 +434,14 @@
       })
 
       this.addEventListener('keypress', function(e) {
-        
+
         if (e.keyCode === 13 || e.which === 13 || e.key === 'Enter') {
           this.submit();
         }
       })
+
+      this.method = this.getAttribute('method') || 'POST';
+      this.action = this.getAttribute('action');
     }
 
     proto.submit = function() {
@@ -435,11 +449,19 @@
     }
 
     proto.attributeChangedCallback = function(name, oldValue, newValue) {
-      if (name === 'data-template') {
+      if (name === 'data-template' || name === 'template') {
         this._template = document.querySelector(newValue);
         this.onended = function(d) {
           this._template && this._template.setModal && this._template.setModal(d);
         }
+      }
+
+      if (name === 'action') {
+        this.action = newValue;
+      }
+
+      if (name === 'method') {
+        this.method = newValue;
       }
     }
 
