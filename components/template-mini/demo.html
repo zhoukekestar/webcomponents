@@ -67,5 +67,56 @@
     var tmplRepeat = document.getElementById('tmplRepeat');
     var tmplIf = document.getElementById('tmplIf');
   </script>
+
+  <h1>README.md examples:</h1>
+  <ul>
+    <li>
+      <h2>repeat</h2>
+      <template-mini data-modal='{"list": ["a", "b", "c"]}'>
+        <ul repeat='item in list'>
+          <li>{{index}}: {{item}}</li>
+        </ul>
+      </template-mini>
+    </li>
+    <li>
+      <h2>if</h2>
+      <template-mini data-modal='{"show": true}'>
+        <p if='show'>Hi</p>
+      </template-mini>
+    </li>
+
+    <li>
+      <h2>elseif, else</h2>
+      <template-mini data-modal='{"num": 3}'>
+        <p if='num === 1'>num is one</p>
+        <p elseif='num === 2'>num is two</p>
+        <p else>num is greater than two</p>
+      </template-mini>
+    </li>
+    <li>
+      <h2>beforeUpdate</h2>
+      <template-mini data-modal='{"time": 1480067606959}' id=abc>
+
+        <p>date: {{formatDate(time)}}</p>
+        <script type='text/beforeUpdate'>
+          this.formatDate = function(num) {
+            return (new Date(num)).toGMTString();
+          }
+          console.log('hi')
+        </script>
+      </template-mini>
+    </li>
+    <li>
+      <h2>afterUpdate</h2>
+      <template-mini data-modal='{}'>
+        <button>sayhi</button>
+        <script type="text/afterUpdate">
+          this.querySelector('button').onclick = function() {
+            alert('hi');
+          }
+        </script>
+      </template-mini>
+    </li>
+  </ul>
 </body>
 </html>

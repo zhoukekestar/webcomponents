@@ -11,6 +11,7 @@
     display: none !important;
   }
 </style>
+
 <script>
   !(function(){
     var proto = Object.create(HTMLElement.prototype)
@@ -25,34 +26,49 @@
 
     /*
      * Save innerHTML to _innerHTML
+     * https://bugs.chromium.org/p/chromium/issues/detail?id=502872
      */
+    // proto.attachedCallback  = function() {
     proto.createdCallback  = function() {
 
       this.classList.add('hide');
       this.setAttribute('resolved', '');
 
-      var beforeUpdate = this.querySelector('script[type="text/beforeUpdate"]');
-      if (beforeUpdate && !this.beforeUpdate) {
-        beforeUpdate.remove();
-        this.beforeUpdate = (new Function(beforeUpdate.innerHTML));
-      }
+      setTimeout((function() {
+        // https://bugs.chromium.org/p/chromium/issues/detail?id=502872
+        // http://stackoverflow.com/questions/40814688/the-way-to-get-full-innerhtml-in-createdcallback-while-it-has-script-tags
+        // https://github.com/skatejs/skatejs/issues/221
 
-      var afterUpdate = this.querySelector('script[type="text/afterUpdate"]');
-      if (afterUpdate && !this.afterUpdate) {
-        afterUpdate.remove();
-        this.afterUpdate = (new Function(afterUpdate.innerHTML)).bind(this);
-      }
-
-      this._innerHTML = this.innerHTML;
-
-      try {
-        if (this.dataset.modal) {
-          this.setModal(JSON.parse(this.dataset.modal))
+        var beforeUpdate = this.querySelector('script[type="text/beforeUpdate"]');
+        if (beforeUpdate && !this.beforeUpdate) {
+          beforeUpdate.remove();
+          this.beforeUpdate = (new Function(beforeUpdate.innerHTML));
         }
-      } catch (e) {
-        console.warn(this)
-        console.warn('Abolve element has invalid modal')
-      }
+
+        var afterUpdate = this.querySelector('script[type="text/afterUpdate"]');
+        if (afterUpdate && !this.afterUpdate) {
+          afterUpdate.remove();
+          this.afterUpdate = (new Function(afterUpdate.innerHTML)).bind(this);
+        }
+
+        this._innerHTML = this.innerHTML;
+
+        try {
+          if (this.dataset.modal) {
+            this.setModal(JSON.parse(this.dataset.modal))
+          } else {
+            var modal = this.getAttribute('modal');
+            if (modal) {
+              this.setModal(JSON.parse(modal))
+            }
+          }
+        } catch (e) {
+          console.warn(this)
+          console.error(e)
+        }
+
+      }).bind(this), 20);
+
     }
 
     /**
@@ -75,7 +91,9 @@
       this.innerHTML = wrapper.innerHTML;
 
       this.dispatchEvent(new Event('template-mini-updated', {bubbles: true}));
-      this.afterUpdate && this.afterUpdate();
+      setTimeout((function() {
+        this.afterUpdate && this.afterUpdate();
+      }).bind(this), 100)
       this.classList.remove('hide')
     }
 
@@ -108,63 +126,66 @@
      *  scope: the data that will be used if some value shold be parsed
      **/
     var parseDom = function(dom, scope) {
+      try {
+        for (var i = 0; i < dom.childNodes.length; i++) {
 
-      for (var i = 0; i < dom.childNodes.length; i++) {
+          var currentNode = dom.childNodes[i];
 
-        var currentNode = dom.childNodes[i];
+          if (currentNode.nodeName === '#text') {
+            currentNode.textContent = currentNode.textContent.replace(/{{(.*?)}}/g, function() {
+              try {
+                return getExpressionValue(scope, arguments[1]);
+              } catch (e) {
+                console.warn(e);
+                return '';
+              }
+            })
+            continue;
+          }
 
-        if (currentNode.nodeName === '#text') {
-          currentNode.textContent = currentNode.textContent.replace(/{{(.*?)}}/g, function() {
-            try {
-              return getExpressionValue(scope, arguments[1]);
-            } catch (e) {
-              console.warn(e);
-              return '';
+          // Parse Children flag
+          var parseChildren = true;
+
+          // Execute directives
+          for (var j = 0; j < directives.length; j++) {
+
+            var currentDirective = directives[j].name;
+            var expression = currentNode.getAttribute(currentDirective);
+
+            // Get current expression
+            if (expression !== null) {
+              parseChildren = parseChildren && directives[j].parseChildren === false ? false : true;
+              directives[j].handler(currentNode, expression, scope);
             }
-          })
-          continue;
+          }
+
+          // Element has children. And parseChildren is true (default is true)
+          if (currentNode.childNodes && currentNode.childNodes.length > 0 && parseChildren && currentNode._remove !== true) {
+            parseDom(currentNode, scope);
+          } else {
+            parseDomAttribute(currentNode, scope);
+          }
+
         }
 
-        // Parse Children flag
-        var parseChildren = true;
 
-        // Execute directives
-        for (var j = 0; j < directives.length; j++) {
-
-          var currentDirective = directives[j].name;
-          var expression = currentNode.getAttribute(currentDirective);
-
-          // Get current expression
-          if (expression !== null) {
-            parseChildren = parseChildren && directives[j].parseChildren === false ? false : true;
-            directives[j].handler(currentNode, expression, scope);
+        /*
+         * Remove the node that _remove is true.
+         *   You should not remove node in your directive handler, because the (children.length) will be (children.length - 1) if you remove it.
+         *   So we have a _remove flag to remove it after index the children.
+         */
+        for (var i = dom.children.length - 1; i >= 0; i--) {
+          if (dom.children[i]._remove === true) {
+            dom.children[i].remove();
           }
         }
 
-        // Element has children. And parseChildren is true (default is true)
-        if (currentNode.childNodes && currentNode.childNodes.length > 0 && parseChildren && currentNode._remove !== true) {
-          parseDom(currentNode, scope);
-        } else {
-          parseDomAttribute(currentNode, scope);
-        }
+        parseDomAttribute(dom, scope);
 
+        return dom;
+      } catch (e) {
+        console.error(e)
       }
-
-
-      /*
-       * Remove the node that _remove is true.
-       *   You should not remove node in your directive handler, because the (children.length) will be (children.length - 1) if you remove it.
-       *   So we have a _remove flag to remove it after index the children.
-       */
-      for (var i = dom.children.length - 1; i >= 0; i--) {
-        if (dom.children[i]._remove === true) {
-          dom.children[i].remove();
-        }
-      }
-
-      parseDomAttribute(dom, scope);
-
-      return dom;
     }
 
 
