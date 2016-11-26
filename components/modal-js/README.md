@@ -1,4 +1,4 @@
-# form-json
+# modal-js
 
 # Install
 `<link rel="import" href="modal-js/index.html">`
