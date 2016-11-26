@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Webcompontents</title>
-  <script src='../../polymer/webcomponentsjs-0.7.23/webcomponents.js'></script>
+  <script src='./lib/webcomponentsjs-0.7.23/webcomponents.js'></script>
   <link rel="import" href="./components/x-slider/index.html">
   <link rel="import" href="./components/template-mini/index.html">
   <link rel="import" href="./components/code-mirror/index.html">
@@ -53,21 +53,21 @@
 		  <img class="github" src="https://g.alicdn.com/mtb/lab-zikuan/0.1.1/weex/github.png" alt="github">
 	  </a>
   </h1>
-  <p style='text-align: center;'>No Polyfill <small>(Of course, Chrome-Only)</small>. You can try <a href="./basic/index.html">basic usage</a>, OR try <a href="./components/index.html">components</a>.</p>
+  <p style='text-align: center;'>No Polyfill <small>(Of course, Chrome-Only)</small>. You can try <a href="https://github.com/zhoukekestar/webcomponents/tree/master/components">WebComponents</a>.</p>
 
   <div class="preview">
     <div class="demo repeat">
 
-      <template-mini data-modal='{"items": [1, 2, 3]}'>
-        <p z-repeat='item in items'>item {{item}}</p>
+      <template-mini modal='{"items": [1, 2, 3]}'>
+        <p repeat='item in items'>item {{item}}</p>
       </template-mini>
     </div>
     <div class="textarea">
 <!-- code-begin -->
       <textarea is='code-mirror'>
 <link rel="import" href="./components/template-mini/index.html">
-<template-mini data-modal='{"items": [1, 2, 3]}'>
-  <p z-repeat='item in items'>item {{item}}</p>
+<template-mini modal='{"items": [1, 2, 3]}'>
+  <p repeat='item in items'>item {{item}}</p>
 </template-mini>
       </textarea>
 <!-- code-end -->
@@ -104,8 +104,8 @@
 
     <div class="demo">
       <x-slider>
-        <template-mini data-modal='{"slides": [1, 2, 3]}' class='swiper-wrapper'>
-            <div class="swiper-slide" z-repeat='slide in slides'>Slide {{slide}}</div>
+        <template-mini modal='{"slides": [1, 2, 3]}' class='swiper-wrapper'>
+            <div class="swiper-slide" repeat='slide in slides'>Slide {{slide}}</div>
         </template-mini>
       </x-slider>
     </div>
@@ -115,8 +115,8 @@
 <link rel="import" href="./components/x-slider/index.html">
 <link rel="import" href="./components/template-mini/index.html">
 <x-slider>
-  <template-mini data-modal='{"slides": [1, 2, 3]}' class='swiper-wrapper'>
-      <div class="swiper-slide" z-repeat='slide in slides'>Slide {{slide}}</div>
+  <template-mini modal='{"slides": [1, 2, 3]}' class='swiper-wrapper'>
+      <div class="swiper-slide" repeat='slide in slides'>Slide {{slide}}</div>
   </template-mini>
 </x-slider>
       </textarea>
