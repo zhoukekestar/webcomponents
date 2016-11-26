@@ -76,25 +76,28 @@
      **/
     proto.setModal = function(d) {
 
-      this.classList.add('hide');
-      this.modal = d;
-      this.innerHTML = this._innerHTML;
-
-      this.beforeUpdate && this.beforeUpdate.call(this.modal, this);
-
-      var wrapper = document.createElement('div');
-      wrapper.innerHTML = this._innerHTML;
-      this._doc = document.createDocumentFragment();
-      this._doc.appendChild(wrapper);
-      parseDom(wrapper, this.modal);
-
-      this.innerHTML = wrapper.innerHTML;
-
-      this.dispatchEvent(new Event('template-mini-updated', {bubbles: true}));
       setTimeout((function() {
-        this.afterUpdate && this.afterUpdate();
-      }).bind(this), 100)
-      this.classList.remove('hide')
+        this.classList.add('hide');
+        this.modal = d;
+        this.innerHTML = this._innerHTML;
+
+        this.beforeUpdate && this.beforeUpdate.call(this.modal, this);
+
+        var wrapper = document.createElement('div');
+        wrapper.innerHTML = this._innerHTML;
+        this._doc = document.createDocumentFragment();
+        this._doc.appendChild(wrapper);
+        parseDom(wrapper, this.modal);
+
+        this.innerHTML = wrapper.innerHTML;
+
+        this.dispatchEvent(new Event('template-mini-updated', {bubbles: true}));
+        setTimeout((function() {
+          this.afterUpdate && this.afterUpdate();
+        }).bind(this), 100)
+        this.classList.remove('hide')
+      }).bind(this), 20);
+
     }
 
     proto.attributeChangedCallback = function() {
@@ -130,6 +133,11 @@
         for (var i = 0; i < dom.childNodes.length; i++) {
 
           var currentNode = dom.childNodes[i];
+
+          // Ignore comment
+          if (currentNode.nodeName === '#comment') {
+            continue;
+          }
 
           if (currentNode.nodeName === '#text') {
             currentNode.textContent = currentNode.textContent.replace(/{{(.*?)}}/g, function() {
