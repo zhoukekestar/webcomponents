@@ -44,9 +44,9 @@ class AppDrawer extends HTMLElement {...}
 window.customElements.define('app-drawer', AppDrawer);
 ```
 
-# Polyfill (for Firefox, IE11)
+# Polyfill (For Firefox, IE11)
 * [webcomponentsjs](https://github.com/webcomponents/webcomponentsjs)
-* [Do not use document.currentScript](https://github.com/webcomponents/webcomponentsjs#currentscript)
+* [Do not use document.currentScript](https://github.com/webcomponents/webcomponentsjs#currentscript), use `(document._currentScript || document.currentScript)` instead.
 * Do not use your [named element](https://html.spec.whatwg.org/multipage/browsers.html#named-access-on-the-window-object) without query.
 
 ```html
@@ -71,7 +71,7 @@ window.customElements.define('app-drawer', AppDrawer);
 <form-json id='form' onchange="form.submit()"></form-json>
 ```
 
-# Other Webcomponents Project
+# Other Webcomponents Projects
 
 * [W3C](http://w3c.github.io/webcomponents/spec/custom/), [hello-world.html](https://github.com/webcomponents/hello-world-element/blob/master/hello-world.html)
 * [webcomponents.org](http://webcomponents.org/)
