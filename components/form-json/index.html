@@ -325,7 +325,7 @@
               self['_XMLHttpRequest'] = xmlHttp;
             }
             self.dispatchEvent(new Event('formJSON-ended', {bubbles: true}));
-
+            self.dispatchEvent(new Event('ended', {bubbles: true}));
           } else {
 
             if (typeof xmlHttp.response === 'string') {
@@ -342,6 +342,7 @@
             }
 
             self.dispatchEvent(new Event('formJSON-error', {bubbles: true}));
+            self.dispatchEvent(new Event('error', {bubbles: true}));
           }
         }
       }
