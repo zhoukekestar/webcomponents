@@ -63,5 +63,26 @@
   * [http://stackoverflow.com/questions/40814688/the-way-to-get-full-innerhtml-in-createdcallback-while-it-has-script-tags](http://stackoverflow.com/questions/40814688/the-way-to-get-full-innerhtml-in-createdcallback-while-it-has-script-tags)
   * [https://github.com/skatejs/skatejs/issues/221](https://github.com/skatejs/skatejs/issues/221)
 
+
+# Methods
+* on(event, [selector,] callback), `selector` is optional.
+```html
+<template-mini modal='{}'>
+  <a href="javascript:;">say yeah</a>
+  <ul>
+    <li data-msg='hi1'><button>say hi1</button></li>
+    <li data-msg='hi2'><button>say hi2</button></li>
+  </ul>
+</template-mini>
+<script>
+  document.querySelector('template-mini').on('click', 'a', function() {
+    alert('yeah')
+  })
+  document.querySelector('template-mini').on('click', 'ul > li', function() {
+    alert(this.dataset.msg)
+  })
+</script>
+```
+
 # online demo
 * [demo](https://zhoukekestar.github.io/webcomponents/components/template-mini/demo.html)

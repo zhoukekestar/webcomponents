@@ -74,7 +74,7 @@
     /**
      * Set modal and apply it to dom.
      **/
-    proto.setModal = function(d) {
+    proto.setModal = function(d, callback) {
 
       setTimeout((function() {
         this.classList.add('hide');
@@ -94,14 +94,36 @@
         this.dispatchEvent(new Event('template-mini-updated', {bubbles: true}));
         setTimeout((function() {
           this.afterUpdate && this.afterUpdate();
+          callback && callback();
         }).bind(this), 100)
         this.classList.remove('hide')
       }).bind(this), 20);
 
     }
 
-    proto.attributeChangedCallback = function() {
+    proto.attributeChangedCallback = function(name, oldValue, newValue) {
+      if (name === 'modal') {
+        this.setModal(JSON.parse(newValue));
+      }
+    }
 
+    proto.on = function(event, selector, fn) {
+
+      if (typeof selector === 'function') {
+        fn = selector;
+        this.addEventListener(event, fn);
+      } else {
+        this.addEventListener(event, function(e) {
+          var target = e.target;
+          while (target !== this && target !== document.body) {
+            if (target.matches && target.matches(selector)) {
+              fn.call(target, e);
+              return;
+            }
+            target = target.parentNode;
+          }
+        })
+      }
     }
 
     document.registerElement('template-mini', {

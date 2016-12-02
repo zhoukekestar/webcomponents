@@ -117,6 +117,25 @@
         </script>
       </template-mini>
     </li>
+    <li>
+      <h2>on(event, selector, callback)</h2>
+      <template-mini id='templateOn' modal='{"list": ["hi1", "hi2", "hi3"]}'>
+        <a href="javascript:;">say yeah</a>
+        <ul>
+          <li repeat='li in list' data-msg='{{li}}'><button>say {{li}}</button></li>
+        </ul>
+      </template-mini>
+      <script>
+        document.querySelector('#templateOn').on('click', 'a', function() {
+          console.log(this);
+          alert('yeah')
+        })
+        document.querySelector('#templateOn').on('click', 'ul > li', function() {
+          console.log(this);
+          alert(this.dataset.msg)
+        })
+      </script>
+    </li>
   </ul>
 </body>
 </html>
