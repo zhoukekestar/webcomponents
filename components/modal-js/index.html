@@ -47,6 +47,18 @@
     margin: -15px -15px 0 -15px;
     position: relative;
   }
+  modal-js .modal-js-dialog header .close {
+    float: right;
+    margin: -15px;
+  }
+  modal-js .modal-js-dialog header .close:before {
+    content: '×';
+    display: block;
+    padding: 15px 20px;
+    font-size: 21px;
+    font-weight: 700;
+    cursor: pointer;
+  }
 
   modal-js .modal-js-dialog header:after,
   modal-js .modal-js-dialog footer:after {
@@ -88,6 +100,9 @@
       this.dialog = wrapper;
 
       this.addEventListener('click', function(e) {
+
+        e.target.matches('header .close') && this.hide();
+
         if (e.target.nodeName === 'BUTTON' && (e.target.hasAttribute('close') || e.target.hasAttribute('hide'))) {
           this.hide();
         }

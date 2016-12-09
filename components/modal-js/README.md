@@ -16,6 +16,7 @@
 * `header` The dialog header
 * `footer` The dialog footer
 * `Others` The dialog body
+* `<header><div class='close'></div></header>` Any Tag with class name `close` in the `header` node can trigger close event.
 
 # Button Attributes
 * `hide` Hide Or Close dialog
