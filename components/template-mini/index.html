@@ -34,40 +34,37 @@
       this.classList.add('hide');
       this.setAttribute('resolved', '');
 
-      setTimeout((function() {
-        // https://bugs.chromium.org/p/chromium/issues/detail?id=502872
-        // http://stackoverflow.com/questions/40814688/the-way-to-get-full-innerhtml-in-createdcallback-while-it-has-script-tags
-        // https://github.com/skatejs/skatejs/issues/221
+      // https://bugs.chromium.org/p/chromium/issues/detail?id=502872
+      // http://stackoverflow.com/questions/40814688/the-way-to-get-full-innerhtml-in-createdcallback-while-it-has-script-tags
+      // https://github.com/skatejs/skatejs/issues/221
 
-        var beforeUpdate = this.querySelector('script[type="text/beforeUpdate"]');
-        if (beforeUpdate && !this.beforeUpdate) {
-          beforeUpdate.remove();
-          this.beforeUpdate = (new Function(beforeUpdate.innerHTML));
+      var beforeUpdate = this.querySelector('script-before') || this.querySelector('script[type="text/beforeUpdate"]');
+      if (beforeUpdate && !this.beforeUpdate) {
+        beforeUpdate.remove();
+        this.beforeUpdate = (new Function(beforeUpdate.innerHTML));
+      }
+
+      var afterUpdate = this.querySelector('script-after') || this.querySelector('script[type="text/afterUpdate"]');
+      if (afterUpdate && !this.afterUpdate) {
+        afterUpdate.remove();
+        this.afterUpdate = (new Function(afterUpdate.innerHTML)).bind(this);
+      }
+
+      this._innerHTML = this.innerHTML;
+
+      try {
+      if (this.dataset.modal) {
+        this.setModal(JSON.parse(this.dataset.modal))
+      } else {
+        var modal = this.getAttribute('modal');
+        if (modal) {
+          this.setModal(JSON.parse(modal))
         }
-
-        var afterUpdate = this.querySelector('script[type="text/afterUpdate"]');
-        if (afterUpdate && !this.afterUpdate) {
-          afterUpdate.remove();
-          this.afterUpdate = (new Function(afterUpdate.innerHTML)).bind(this);
-        }
-
-        this._innerHTML = this.innerHTML;
-
-        try {
-          if (this.dataset.modal) {
-            this.setModal(JSON.parse(this.dataset.modal))
-          } else {
-            var modal = this.getAttribute('modal');
-            if (modal) {
-              this.setModal(JSON.parse(modal))
-            }
-          }
-        } catch (e) {
-          console.warn(this)
-          console.error(e)
-        }
-
-      }).bind(this), 20);
+      }
+      } catch (e) {
+        console.warn(this)
+        console.error(e)
+      }
 
     }
 
@@ -76,28 +73,26 @@
      **/
     proto.setModal = function(d, callback) {
 
+      this.classList.add('hide');
+      this.modal = d;
+      this.innerHTML = this._innerHTML;
+
+      this.beforeUpdate && this.beforeUpdate.call(this.modal, this);
+
+      var wrapper = document.createElement('div');
+      wrapper.innerHTML = this._innerHTML;
+      this._doc = document.createDocumentFragment();
+      this._doc.appendChild(wrapper);
+      parseDom(wrapper, this.modal);
+
+      this.innerHTML = wrapper.innerHTML;
+
+      this.dispatchEvent(new Event('template-mini-updated', {bubbles: true}));
       setTimeout((function() {
-        this.classList.add('hide');
-        this.modal = d;
-        this.innerHTML = this._innerHTML;
-
-        this.beforeUpdate && this.beforeUpdate.call(this.modal, this);
-
-        var wrapper = document.createElement('div');
-        wrapper.innerHTML = this._innerHTML;
-        this._doc = document.createDocumentFragment();
-        this._doc.appendChild(wrapper);
-        parseDom(wrapper, this.modal);
-
-        this.innerHTML = wrapper.innerHTML;
-
-        this.dispatchEvent(new Event('template-mini-updated', {bubbles: true}));
-        setTimeout((function() {
-          this.afterUpdate && this.afterUpdate();
-          callback && callback();
-        }).bind(this), 100)
-        this.classList.remove('hide')
-      }).bind(this), 20);
+        this.afterUpdate && this.afterUpdate();
+        callback && callback();
+      }).bind(this), 100)
+      this.classList.remove('hide')
 
     }
 
@@ -131,10 +126,10 @@
     });
 
     // parse expression in attributes
-    var parseDomAttribute = function(dom, scope) {
-      for (var i = 0; i < dom.attributes.length; i++) {
+    var parseDomAttribute = function(node, scope) {
+      for (var i = 0; i < node.attributes.length; i++) {
 
-        dom.attributes[i].value = dom.attributes[i].value.replace(/{{(.*?)}}/g, function() {
+        node.attributes[i].value = node.attributes[i].value.replace(/{{(.*?)}}/g, function() {
           try {
             return getExpressionValue(scope, arguments[1]);
           } catch (e) {
@@ -142,6 +137,10 @@
             return '';
           }
         })
+
+        if (node.nodeName === 'IMG') {
+          node.src = node.src || node.getAttribute('data-src');
+        }
       }
     }
 

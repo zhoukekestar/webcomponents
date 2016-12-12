@@ -35,30 +35,38 @@
 </template-mini>
 ```
 
+* `data-src` (only for img)
+```html
+<template-mini>
+  <img src='/{{imgurl}}'> // This will request a image with url `/%7B%7Bimgurl%7D%7D` after page is loaded.
+  <img data-src='{{img}}'> // Template-mini will set attribute `src` from attribute `data-src` if `src` is null.
+</template-mini>
+```
+
 # scripts
-* 'text/beforeUpdate'
+* 'script-before'
 ```html
 <template-mini data-modal='{"time": 1480067606959}'>
   <p>date: {{formatDate(time)}}</p>
-  <script type="text/beforeUpdate">
+  <script-before>
     this.formatDate = function(num) {
       return new Date(num).toGMTString();
     }
-  </script>
+  </script-before>
 </template-mini>
 ```
-* 'text/afterUpdate'
+* 'script-after'
 ```html
 <template-mini>
   <button>sayhi</button>
-  <script type="text/afterUpdate">
+  <script-after>
     this.querySelector('button').onclick = function() {
       alert('hi');
     }
-  </script>
+  </script-after>
 </template-mini>
 ```
-* *Attention*! the script `must` be last child.
+* *Attention*! If you use `<script type='text/beforeUpdate'></script>`, the script `must` be last child.
   * [https://bugs.chromium.org/p/chromium/issues/detail?id=502872](https://bugs.chromium.org/p/chromium/issues/detail?id=502872)
   * [http://stackoverflow.com/questions/40814688/the-way-to-get-full-innerhtml-in-createdcallback-while-it-has-script-tags](http://stackoverflow.com/questions/40814688/the-way-to-get-full-innerhtml-in-createdcallback-while-it-has-script-tags)
   * [https://github.com/skatejs/skatejs/issues/221](https://github.com/skatejs/skatejs/issues/221)

@@ -20,15 +20,16 @@
     <ul>
       <li repeat='item2 in items2'>{{convert1(convert0(index))}}: {{item2.name}} <span>{{item2.name}}</span> </li>
     </ul>
+    <img data-src="{{person.img}}" alt="">
     <p data-preson='{{person.name}}' data-country='country: {{person.address.country}}'>{{person.name}}: {{person.address.country}} - {{person.address.province}} <small>{{person.address.time}}</small></p>
-    <script type='text/beforeUpdate'>
+    <script-before>
       this.convert1 = function(value) {
         return '(convert1: ' + value + ')';
       }
-    </script>
-    <script type='text/afterUpdate'>
+    </script-before>
+    <script-after>
       console.log('is updated!')
-    </script>
+    </script-after>
   </template-mini>
 
   <button onclick="repeat()">tmplRepeat</button>
@@ -40,6 +41,7 @@
         items2: [{name: 'name-a'}, {name: 'name-b'}],
         person: {
           name: 'name',
+          img: 'https://avatars2.githubusercontent.com/u/7157346?v=3&s=40',
           address: {
             country: 'china',
             province: 'zhejiang',
@@ -98,23 +100,23 @@
       <template-mini modal='{"time": 1480067606959}' id=abc>
 
         <p>date: {{formatDate(time)}}</p>
-        <script type='text/beforeUpdate'>
+        <script-before>
           this.formatDate = function(num) {
             return (new Date(num)).toGMTString();
           }
           console.log('hi')
-        </script>
+        </script-before>
       </template-mini>
     </li>
     <li>
       <h2>afterUpdate</h2>
       <template-mini modal='{}'>
         <button>sayhi</button>
-        <script type="text/afterUpdate">
+        <script-after>
           this.querySelector('button').onclick = function() {
             alert('hi');
           }
-        </script>
+        </script-after>
       </template-mini>
     </li>
     <li>
