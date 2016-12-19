@@ -21,8 +21,18 @@
       return (new Function('with (this) {  return ' + expression + '}')).call(scope);
     }
 
+
+    Object.defineProperty(proto, 'modal', {
+      set: function(x) {
+        this.setModal(x);
+        this._modal = x;
+      },
+      get: function() {
+        return this._modal;
+      }
+    })
     // Modal
-    proto.modal = '';
+    proto._modal = '';
 
     /*
      * Save innerHTML to _innerHTML
@@ -74,16 +84,16 @@
     proto.setModal = function(d, callback) {
 
       this.classList.add('hide');
-      this.modal = d;
+      this._modal = d;
       this.innerHTML = this._innerHTML;
 
-      this.beforeUpdate && this.beforeUpdate.call(this.modal, this);
+      this.beforeUpdate && this.beforeUpdate.call(this._modal, this);
 
       var wrapper = document.createElement('div');
       wrapper.innerHTML = this._innerHTML;
       this._doc = document.createDocumentFragment();
       this._doc.appendChild(wrapper);
-      parseDom(wrapper, this.modal);
+      parseDom(wrapper, this._modal);
 
       this.innerHTML = wrapper.innerHTML;
 

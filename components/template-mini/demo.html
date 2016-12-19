@@ -36,7 +36,7 @@
   <script>
 
     var repeat = function() {
-      tmplRepeat.setModal({
+      tmplRepeat.modal = {
         items: ['a', 'b', 'c'],
         items2: [{name: 'name-a'}, {name: 'name-b'}],
         person: {
@@ -51,7 +51,7 @@
         convert0: function(value) {
           return '(convert0: ' + value + ')'
         }
-      })
+      }
     }
   </script>
   <template-mini id='tmplIf'>
@@ -63,7 +63,7 @@
     <p elseif='name === "b"'>b is interesting</p>
     <p else>your name is good..</p>
   </template-mini>
-  <button onclick='tmplIf.setModal({show: true, name:"a"})'>tmplIf true</button>
+  <button onclick='tmplIf.modal = {show: true, name:"a"}'>tmplIf true</button>
   <button onclick='tmplIf.setModal({show: false, obj: {test: [{enabled: true}]}})'>tmplIf false</button>
   <script>
     var tmplRepeat = document.getElementById('tmplRepeat');
