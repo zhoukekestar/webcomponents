@@ -22,10 +22,49 @@
     }
 
 
+    // TODO: Observer a nested object
+    var functionalProperty = function(obj, property, setter, getter) {
+      obj._data = obj._data || {};
+      obj._data[property] = obj[property];
+
+      Object.defineProperty(obj, property, {
+        enumerable: true,
+        set: function(x) {
+          this._data[property] = x;
+          setter && setter.call(this, property, x);
+        },
+        get: function() {
+          getter && getter.call(this, property);
+          return this._data[property];
+        }
+      })
+    }
+
+    var functionalProperties = function(obj, setter, getter) {
+      if (typeof obj !== 'object') return;
+
+      for (var i in obj) {
+        if (typeof obj[i] !== 'function' && i !== '_data') {
+          functionalProperty(obj, i, setter, getter)
+
+          // TODO: observer nested object
+          // if (typeof obj[i] === 'object' && !(obj[i] instanceof Array)) {
+          //   functionalProperties(obj[i], setter, getter)
+          // }
+        }
+      }
+    }
+
+    // Define watcher for modal property.
     Object.defineProperty(proto, 'modal', {
       set: function(x) {
+
+        functionalProperties(x, (function(property, val) {
+          // functionalProperties(x);
+          this.setModal();
+        }).bind(this));
+
         this.setModal(x);
-        this._modal = x;
       },
       get: function() {
         return this._modal;
@@ -63,14 +102,14 @@
       this._innerHTML = this.innerHTML;
 
       try {
-      if (this.dataset.modal) {
-        this.setModal(JSON.parse(this.dataset.modal))
-      } else {
-        var modal = this.getAttribute('modal');
-        if (modal) {
-          this.setModal(JSON.parse(modal))
+        if (this.dataset.modal) {
+          this.setModal(JSON.parse(this.dataset.modal))
+        } else {
+          var modal = this.getAttribute('modal');
+          if (modal) {
+            this.setModal(JSON.parse(modal))
+          }
         }
-      }
       } catch (e) {
         console.warn(this)
         console.error(e)
@@ -83,8 +122,8 @@
      **/
     proto.setModal = function(d, callback) {
 
+      this._modal = d || this._modal;
       this.classList.add('hide');
-      this._modal = d;
       this.innerHTML = this._innerHTML;
 
       this.beforeUpdate && this.beforeUpdate.call(this._modal, this);
@@ -135,8 +174,25 @@
       prototype: proto
     });
 
+    /*
+    * Remove the node that _remove is true.
+    *   You should not remove node in your directive handler, because the (children.length) will be (children.length - 1) if you remove it.
+    *   So we have a _remove flag to remove it after index the children.
+    */
+    var removeTaggedChildren = function(node) {
+      for (var i = node.children.length - 1; i >= 0; i--) {
+        if (node.children[i]._remove === true) {
+          node.children[i].remove();
+        }
+      }
+    }
+
     // parse expression in attributes
     var parseDomAttribute = function(node, scope) {
+      if (node._remove === true) {
+        return;
+      }
+
       for (var i = 0; i < node.attributes.length; i++) {
 
         node.attributes[i].value = node.attributes[i].value.replace(/{{(.*?)}}/g, function() {
@@ -204,21 +260,9 @@
           } else {
             parseDomAttribute(currentNode, scope);
           }
-
         }
 
-
-        /*
-         * Remove the node that _remove is true.
-         *   You should not remove node in your directive handler, because the (children.length) will be (children.length - 1) if you remove it.
-         *   So we have a _remove flag to remove it after index the children.
-         */
-        for (var i = dom.children.length - 1; i >= 0; i--) {
-          if (dom.children[i]._remove === true) {
-            dom.children[i].remove();
-          }
-        }
-
+        removeTaggedChildren(dom);
         parseDomAttribute(dom, scope);
 
         return dom;

@@ -13,7 +13,7 @@
 # Syntax
 * `repeat`
 ```html
-<template-mini data-modal='{"list": ["a", "b", "c"]}'>
+<template-mini modal='{"list": ["a", "b", "c"]}'>
   <ul repeat='item in list'>
     <li>{{index}}: {{item}}</li>
   </ul>
@@ -21,14 +21,14 @@
 ```
 * `if`
 ```html
-<template-mini data-modal='{"show": true}'>
+<template-mini modal='{"show": true}'>
   <p if='show'>Hi</p>
 </template-mini>
 ```
 
 * `elseif`, `else`
 ```html
-<template-mini data-modal='{"num": 1}'>
+<template-mini modal='{"num": 1}'>
   <p if='num === 1'>num is one</p>
   <p elseif='num === 2'>num is two</p>
   <p else>num is greater than two</p>
@@ -46,7 +46,7 @@
 # scripts
 * 'script-before'
 ```html
-<template-mini data-modal='{"time": 1480067606959}'>
+<template-mini modal='{"time": 1480067606959}'>
   <p>date: {{formatDate(time)}}</p>
   <script-before>
     this.formatDate = function(num) {
@@ -71,6 +71,21 @@
   * [http://stackoverflow.com/questions/40814688/the-way-to-get-full-innerhtml-in-createdcallback-while-it-has-script-tags](http://stackoverflow.com/questions/40814688/the-way-to-get-full-innerhtml-in-createdcallback-while-it-has-script-tags)
   * [https://github.com/skatejs/skatejs/issues/221](https://github.com/skatejs/skatejs/issues/221)
 
+# Attributes
+* `modal` The modal for template
+```html
+<template-mini>
+  <p>{{name}}</p>
+</template-mini>
+<script>
+  var tmpl = document.querySelector('template-mini')
+  tmpl.modal = {name: 'template-mini'};
+  // This code doesn't update name as we only observe the modal object.
+  // tmpl.modal.name = 'template-mini2';
+  // This code will update name.
+  tmpl.modal = {name: 'template-mini2'};
+</script>
+```
 
 # Methods
 * on(event, [selector,] callback), `selector` is optional.
