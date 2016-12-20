@@ -6,6 +6,18 @@
   <link rel="import" href="index.html">
 </head>
 <body>
+  <template-mini modal='{"name": "template-mini"}'>
+    <p>{{name}}</p>
+  </template-mini>
+  <script>
+    var tmpl = document.querySelector('template-mini')
+    // tmpl.modal = {name: 'template-mini'};
+    // This code pdate name as we observe the modal's property.
+    // tmpl.modal.name = 'template-mini2';
+    // This code will update name.
+    // tmpl.modal = {name: 'template-mini2'};
+  </script>
+
   <p>Simple Unit Test is
     <template-mini modal='{"items": [1, 2, 3, 4, 5, 6, 7, 8]}'>
       <a href="./test.html" repeat='i in items' style='margin-right: 10px;'>here.</a>

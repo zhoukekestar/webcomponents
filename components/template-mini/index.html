@@ -107,7 +107,7 @@
         } else {
           var modal = this.getAttribute('modal');
           if (modal) {
-            this.setModal(JSON.parse(modal))
+            this.modal = JSON.parse(modal);
           }
         }
       } catch (e) {

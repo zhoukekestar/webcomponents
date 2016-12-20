@@ -80,10 +80,19 @@
 <script>
   var tmpl = document.querySelector('template-mini')
   tmpl.modal = {name: 'template-mini'};
-  // This code doesn't update name as we only observe the modal object.
-  // tmpl.modal.name = 'template-mini2';
-  // This code will update name.
-  tmpl.modal = {name: 'template-mini2'};
+  // This code pdate name as we observe the modal's property.
+  tmpl.modal.name = 'template-mini2';
+
+  // Attention !!! WARNING.
+  // We can't observe a nested object, the code below will not work as expected
+  // tmpl.modal.nested.object.name = 'new-value';
+  // We can only observe the modal property like:
+  // tmpl.modal.nested = {object: {name: 'new-value'}}
+  // OR modal object.
+  // tmpl.modal = {nested: {object: {name: 'new-value'}}};
+
+  // This code will update name too.
+  // tmpl.modal = {name: 'template-mini3'};
 </script>
 ```
 
