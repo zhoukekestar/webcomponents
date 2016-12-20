@@ -294,6 +294,7 @@
           }
 
           // repeat
+          var count = 0;
           for (var index in expression.items) {
 
             // Clone template node
@@ -302,13 +303,18 @@
 
             // Set new scope
             scope[expression.itemName] = expression.items[index];
-            scope.index = +index;
+            scope.index = count; // for older version
+            scope._index = count;
+            count++;
+            scope._key = index;
 
             // Append new parsed dom
             parent.appendChild(parseDom(cloneNode, scope))
           }
 
           delete scope.index;
+          delete scope._index;
+          delete scope._key;
           delete scope[expression.itemName];
 
         } catch (e) {

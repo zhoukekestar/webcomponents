@@ -11,11 +11,14 @@
 ```
 
 # Syntax
-* `repeat`
+* `repeat`. Hidden keys: `_key`, `_index`.
 ```html
-<template-mini modal='{"list": ["a", "b", "c"]}'>
-  <ul repeat='item in list'>
-    <li>{{index}}: {{item}}</li>
+<template-mini modal='{"list": ["a", "b", "c"], "list2": {"key1": "value1", "key2": "value2"}}'>
+  <ul>
+    <li repeat='item in list'>{{_index}}: {{item}}</li>
+  </ul>
+  <ul>
+    <li repeat='item in list2'>{{_index}}-{{_key}-{{item}}}</li>
   </ul>
 </template-mini>
 ```
