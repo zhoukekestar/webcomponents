@@ -121,3 +121,7 @@
 
 # online demo
 * [demo](https://zhoukekestar.github.io/webcomponents/components/template-mini/demo.html)
+
+# Other Repos
+* [TemplateBinding](https://github.com/Polymer/TemplateBinding)
+* [TemplateBinding.js](https://github.com/Polymer/TemplateBinding/blob/master/src/TemplateBinding.js)
