@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title></title>
+  <link rel="import" href="./index.html">
+  <style>
+  .scroll {
+    height: 250px;
+    overflow: scroll;
+  }
+  </style>
+</head>
+<body>
+  <p>Default form.</p>
+  <form action="">
+    <input type="text" required>
+    <input type="text" pattern="abc">
+    <input type="submit">
+  </form>
+  <p>Form example:</p>
+  <form novalidate>
+    <input type='email' is='input-validator' placeholder="email">
+    <input type='cellphone' is='input-validator' placeholder="cellphone">
+    <input type='integer' is='input-validator' placeholder="integer">
+    <input type='url' is='input-validator'>
+    <input type='date' is='input-validator'>
+
+    <input required is='input-validator'>
+    <input pattern='/name/' is='input-validator'>
+    <input minlength='4' is='input-validator'>
+    <input maxlength='5' is='input-validator'>
+    <input class="customValid" is='input-validator'>
+
+    <input type='submit'>
+  </form>
+  <p>Scroll Form Validator:</p>
+  <div class="scroll">
+    <form action="">
+      <p>1</p>
+      <p>2</p>
+      <p>3</p>
+      <p>4</p>
+      <input type="text" required is='input-validator' errorMsgBoxHolder='.scroll'>
+      <p>1</p>
+      <p>2</p>
+      <p>3</p>
+      <p>You can set defaultHolder by:</p>
+      <code>
+        var e = new Event('input-validator-default-holder');
+        e.value = '.scroll';
+        document.dispatchEvent(e);
+      </code>
+    </form>
+  </div>
+  <p>REC form style:</p>
+  <form novalidate>
+    <div class="form-group">
+      <label>name</label>
+      <div class="input-group">
+        <input required is='input-validator' msg='{"required":"no! it\"s required"}'>
+      </div>
+    </div>
+    <input type='submit'>
+  </form>
+  <script>
+  document.querySelector('.customValid')._checkValidity = function() {
+
+    if (this.value === 'custom')
+      return '';
+    else
+      return 'Please input custom'
+  }
+  </script>
+</body>
+</html>

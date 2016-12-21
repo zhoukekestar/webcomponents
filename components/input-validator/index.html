@@ -1,0 +1,379 @@
+<!-- Source & Doc @ https://github.com/zhoukekestar/webcomponents/tree/master/components/input-validator -->
+<style>
+.input-validator-invalid {
+  outline: none !important;
+  border-color: #a94442;
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+.input-validator-valid {
+  outline: none !important;
+  border-color: #3c763d;
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #67b168;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+.input-validator-errorMsgBox {
+  position: absolute;
+  padding: 5px 10px;
+  background-color: #fff;
+  border: solid 1px #a94442;
+  border-radius: 8px;
+  margin-top: 10px;
+  margin-left: -10px;
+  color: #a94442;
+  font-size: 14px;
+  z-index: 9999;
+}
+.input-validator-errorMsgBox:before,
+.input-validator-errorMsgBox:after {
+  content: '';
+  position: absolute;
+  height: 0;
+  width: 0;
+  border: solid 8px;
+  border-color: transparent transparent #a94442;
+  left: 6px;
+  top: -16px;
+}
+.input-validator-errorMsgBox:after {
+  border-color: transparent transparent #fff;
+  top: -15px;
+}
+</style>
+
+<!-- input-validator -->
+<script>
+
+!(function() {
+
+  var validator = {
+
+    // Form validation: type=[email,number,cellphone]
+    type: function(ele, msg) {
+
+      var value = ele.value;
+
+      // @see https://github.com/jzaefferer/jquery-validation/blob/master/src/core.js
+      switch (ele.getAttribute("type")) {
+        case undefined:
+          return "";
+        case "hidden":
+          return "";
+        case "submit":
+          return "";
+        case "email":
+          return /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(value) ? "" : msg.email;
+        case "number":
+          return /^(?:-?\d+|-?\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(value) ? "" : msg.number;
+        case "tel":
+        case "phone":
+        case "cellphone":
+          return /^[1][3,4,5,7,8][0-9]{9}$/.test(value) ? "" : msg.cellphone;
+        case "integer":
+          return /^\d+$/.test(value) ? "" : msg.integer;
+        case "url":
+          return /^(https?|s?ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(value) ? "" : msg.url;
+        case 'date':
+          return isNaN(new Date(value).getTime()) ? msg.date : '';
+        default:
+          return "";
+      }
+
+    },
+    // Form validation: required.
+    required: function(ele, msg) {
+      if (ele.getAttribute("required") !== null && !ele.value)
+        return msg.required;
+      return "";
+    },
+    // Form validation: pattern.
+    pattern: function(ele, msg) {
+      if (!ele.getAttribute("pattern"))
+        return "";
+      var reg = new RegExp(ele.getAttribute("pattern"));
+      return reg.test(ele.value) ? "" : msg.pattern;
+    },
+    // Form validation: data-equalto=[selector].
+    equalto: function(ele, msg) {
+      if (!ele.getAttribute("data-equalto"))
+        return "";
+      var ele = document.querySelector(ele.getAttribute("data-equalto"));
+      if (ele && ele.value === ele.value)
+        return "";
+      return msg.equalto;
+    },
+    minlength: function(ele, msg) {
+      var l = ele.getAttribute('minlength');
+      if (!l)
+        return "";
+      l = +l;
+      if (ele.value.length >= l) {
+        return "";
+      } else {
+        return msg.minlength.replace("{num}", l);
+      }
+    },
+    maxlength: function(ele, msg) {
+      var l = ele.getAttribute('maxlength');
+      if (!l)
+        return "";
+      l = +l;
+      if (ele.value.length <= l) {
+        return "";
+      } else {
+        return msg.maxlength.replace("{num}", l)
+      }
+    },
+    defaultMsg: {
+      email: "邮箱地址错误",
+      number: "数字格式错误",
+      cellphone: "手机号错误",
+      integer: "请输入整数",
+      url: "请输入正确的网址",
+      date: "日期错误",
+      required: "必须填写",
+      pattern: "请输入正确的值",
+      equalto: "输入值不同",
+      fun: "请输入正确的值",
+      minlength: "最小长度为{num}",
+      maxlength: "最大长度为{num}"
+    }
+  }
+
+  var validIt = function() {
+    var validMsg = JSON.parse(this.getAttribute('msg')),
+      key,
+      msg = {},
+      returnMsg;
+
+    for (key in validator.defaultMsg) {
+      msg[key] = validator.defaultMsg[key];
+    }
+    for (key in validMsg) {
+      msg[key] = validMsg[key];
+    }
+
+    returnMsg =
+      // check type
+      validator.type(this, msg) ||
+
+      // check required
+      validator.required(this, msg) ||
+
+      // check equalto
+      validator.equalto(this, msg) ||
+
+      // check pattern
+      validator.pattern(this, msg) ||
+
+      // check custom function
+      validator.minlength(this, msg) ||
+
+      // check custom function
+      validator.maxlength(this, msg);
+
+    return returnMsg;
+
+  }
+
+  var namespace = '_';
+  var inputHandler = function(target, eventType) {
+
+    // Disabled special type input.
+    var inputType = target.getAttribute('type');
+    if (inputType === 'submit' || inputType === 'hidden')
+      return;
+
+    // Custom validator for user
+    var msg = validIt.call(target) || (target[namespace + 'checkValidity'] && target[namespace + 'checkValidity'].call(target));
+
+    if (msg) {
+
+      target[namespace + 'invalid'] = true;
+      target[namespace + 'invalidationMessage'] = msg;
+      target[namespace + 'type'] = eventType;
+
+      target.dispatchEvent(new Event('input-invalid', {bubbles: true}));
+
+    } else {
+
+      target[namespace + 'invalid'] = false;
+      target[namespace + 'invalidationMessage'] = '';
+      target[namespace + 'type'] = eventType;
+
+      target.dispatchEvent(new Event('input-valid', {bubbles: true}));
+    }
+
+    return msg || '';
+  }
+
+  /**
+  * Stop propagation 'submit' event if necessary before bubbling to `document` node.
+  */
+  document.body.addEventListener('submit', function(e) {
+
+    var inputs = [].slice.apply(e.target.querySelectorAll('input[is="input-validator"]'));
+    var isValid = true;
+
+    for (var i = 0, max = inputs.length; i < max; i++) {
+
+      var type = inputs[i].getAttribute('type');
+      if (type === 'submit' || type === 'hidden')
+        continue;
+
+      inputHandler(inputs[i], e.type) === '' || (isValid = false);
+
+      // if (!isValid)
+      //   break;
+    }
+
+    /*
+    * Stop everything if invalid input is existed.
+    */
+    if (!isValid) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+  });
+
+
+  var proto = Object.create(HTMLInputElement.prototype);
+
+  proto.createdCallback = function() {
+
+    this.addEventListener('focusout', function(e) {
+      inputHandler(this, 'focusout');
+    })
+
+    this.addEventListener('input', function(e) {
+      // if input has invalid message, just show it, do not check it before focusout.
+      if (self[namespace + 'invalid'] !== undefined) {
+        inputHandler(self, 'input');
+      }
+    })
+  }
+
+  document.registerElement('input-validator', {
+    prototype: proto,
+    extends: 'input'
+  })
+
+})();
+</script>
+
+
+<!-- show invalid message -->
+<script>
+!(function() {
+
+  var defaultHolder = 'body'
+    , boxs = []
+    , namespace = '_';
+
+  /**
+  * Show only one message in one minute.
+  */
+  var showOnlyOneMessageInOneMinute = true;
+  document.addEventListener('input-invalid', function(e) {
+
+    var target = e.target
+      , eventType = target[namespace + 'type']
+      , invalidationMessage =  target[namespace + 'invalidationMessage']
+
+    boxs.push(target);
+    target.classList.add('input-validator-invalid');
+    target.classList.remove('input-validator-valid');
+
+    /*
+    * eventType : [focusout] NOT 'input' event
+    */
+    if (eventType !== 'input') {
+
+      if (target.errorMsgBox && target.errorMsgBox.innerHTML !== invalidationMessage) {
+        // remove & update
+        target.errorMsgBox.remove()
+        target.errorMsgBox = null;
+      }
+
+      if (!target.errorMsgBox) {
+        var width  = +(getComputedStyle(target).width.split('px')[0])
+          , height = +(getComputedStyle(target).height.split('px')[0])
+          , top    = document.body.scrollTop + target.getBoundingClientRect().top
+          , left   = document.body.scrollLeft + target.getBoundingClientRect().left;
+
+        var errorMsgBox = document.createElement('div');
+        errorMsgBox.innerHTML = invalidationMessage;
+        errorMsgBox.classList.add('input-validator-errorMsgBox');
+
+        // append it to holder
+        var holder = target.getAttribute('errorMsgBoxHolder') || defaultHolder;
+        holder = document.querySelector(holder);
+        holder.appendChild(errorMsgBox);
+
+        if (holder !== document.body) {
+
+          // Set holder's style
+          if (getComputedStyle(holder).position === 'static') {
+            holder.style.position = 'relative'
+          }
+          top -= (document.body.scrollTop + holder.getBoundingClientRect().top);
+          top += holder.scrollTop;
+          left -= (document.body.scrollLeft + holder.getBoundingClientRect().left);
+          left += holder.scrollLeft;
+        }
+
+
+        errorMsgBox.style.left = (left + width / 2) + 'px';
+        errorMsgBox.style.top  = (top + height) + 'px';
+
+        target.errorMsgBox = errorMsgBox;
+      }
+
+      // if (showOnlyOneMessageInOneMinute) {
+      //   var alert = window.toast || window.alert;
+      //   showOnlyOneMessageInOneMinute = false;
+      //   alert(invalidationMessage);
+      //
+      // }
+      // setTimeout(function(){
+      //   showOnlyOneMessageInOneMinute = true;
+      // }, 100)
+
+    }
+  })
+
+  document.addEventListener('input-validator-default-holder', function(e) {
+    defaultHolder = e.value;
+  })
+
+  document.addEventListener('input-valid', function(e) {
+
+    var index = boxs.indexOf(e.target);
+    (index !== -1) && boxs.splice(index, 1);
+
+    e.target.classList.add('input-validator-valid');
+    e.target.classList.remove('input-validator-invalid');
+
+    if (e.target.errorMsgBox) {
+      e.target.errorMsgBox.remove()
+      e.target.errorMsgBox = null;
+    }
+  })
+
+  setInterval(function() {
+    for (var i = boxs.length - 1; i >= 0; i--) {
+      var rect = boxs[i].getBoundingClientRect();
+      if (rect.bottom + rect.height + rect.left + rect.right + rect.top + rect.width === 0 && boxs[i].errorMsgBox) {
+        boxs[i].errorMsgBox.remove();
+        boxs[i].errorMsgBox = null;
+      }
+    }
+  }, 1000)
+})();
+
+</script>
