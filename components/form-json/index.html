@@ -474,7 +474,7 @@
     }
 
     // before register
-    window.HTMLFormJSONElement.beforeRegister && HTMLFormJSONElement.beforeRegister.call(proto);
+    window.HTMLFormJSONElement && window.HTMLFormJSONElement.beforeRegister && HTMLFormJSONElement.beforeRegister.call(proto);
     window.HTMLFormJSONElement = document.registerElement('form-json', {
       prototype: proto
     });
