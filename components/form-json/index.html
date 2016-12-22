@@ -447,7 +447,13 @@
     }
 
     proto.submit = function() {
-      this.dispatchEvent(new Event('formJSON-submit', {bubbles: true}));
+      // If we are in webcomponents, different document.
+      // We can't dispatchEvent to document so we submit it directly.
+      if (this.webcomponents) {
+        submitListener({target: this, preventDefault: function(){}, stopPropagation: function(){}})
+      } else {
+        this.dispatchEvent(new Event('formJSON-submit', {bubbles: true}));
+      }
     }
 
     proto.attributeChangedCallback = function(name, oldValue, newValue) {
@@ -467,9 +473,12 @@
       }
     }
 
-    document.registerElement('form-json', {
+    // before register
+    window.HTMLFormJSONElement.beforeRegister && HTMLFormJSONElement.beforeRegister.call(proto);
+    window.HTMLFormJSONElement = document.registerElement('form-json', {
       prototype: proto
     });
+
   })();
 
 </script>
