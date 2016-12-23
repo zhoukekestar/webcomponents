@@ -150,16 +150,6 @@
 
       var self = this;
 
-      // We cna't observe the attributes if set its value directly
-      // So change it if value is not equal to attribute.
-      if (self.action && self.action !== self.getAttribute('action')) {
-        self.setAttribute('action', self.action)
-      }
-
-      if (self.method && self.method !== self.getAttribute('method')) {
-        self.setAttribute('method', self.method);
-      }
-
       var method = self.getAttribute('method') || 'POST';
       var res;
 
@@ -325,7 +315,7 @@
               options.ended.call(self, xmlHttp.response, xmlHttp);
               self['_XMLHttpRequest'] = xmlHttp;
             }
-            self.dispatchEvent(new Event('formJSON-ended', {bubbles: true}));
+            self.dispatchEvent(new Event('form-json-ended', {bubbles: true}));
             // self.dispatchEvent(new Event('ended', {bubbles: true}));
           } else {
 
@@ -342,7 +332,7 @@
               self['_XMLHttpRequest'] = xmlHttp;
             }
 
-            self.dispatchEvent(new Event('formJSON-error', {bubbles: true}));
+            self.dispatchEvent(new Event('form-json-error', {bubbles: true}));
             // self.dispatchEvent(new Event('error', {bubbles: true}));
           }
         }
@@ -382,7 +372,7 @@
     /**
      * Submit form's handler.
      * Example:
-     * <form data-role='formJSON'>
+     * <form data-role='form-json'>
      * </form>
      */
     var submitListener = function(e) {
@@ -410,7 +400,7 @@
 
     }
     document.addEventListener('submit', submitListener)
-    document.addEventListener('formJSON-submit', submitListener)
+    document.addEventListener('form-json-submit', submitListener)
 
     var proto = Object.create(HTMLElement.prototype);
 
@@ -429,16 +419,38 @@
         this.submit();
       }
 
+      // Listener for <input type='sbumit' />
       this.addEventListener('click', function(e) {
         if (e.target.type === 'submit') {
           this.submit();
         }
       })
 
+      // Bind Enter key
       this.addEventListener('keypress', function(e) {
 
         if (e.keyCode === 13 || e.which === 13 || e.key === 'Enter') {
           this.submit();
+        }
+      })
+
+      Object.defineProperty(this, 'method', {
+        get: function() {
+          return this._method;
+        },
+        set: function(x) {
+          this.setAttribute('method', x);
+          this._method = x;
+        }
+      })
+
+      Object.defineProperty(this, 'action', {
+        get: function() {
+          return this._action;
+        },
+        set: function(x) {
+          this.setAttribute('action', x)
+          this._action = x;
         }
       })
 
@@ -449,10 +461,13 @@
     proto.submit = function() {
       // If we are in webcomponents, different document.
       // We can't dispatchEvent to document so we submit it directly.
-      if (this.webcomponents) {
+      var inwebcomponents = this.webcomponents || this.inwebcomponents || this.getAttribute('inwebcomponents');
+      inwebcomponents = inwebcomponents === '' ? true : inwebcomponents; // <form-json inwebcomponents></form-json>
+
+      if (inwebcomponents) {
         submitListener({target: this, preventDefault: function(){}, stopPropagation: function(){}})
       } else {
-        this.dispatchEvent(new Event('formJSON-submit', {bubbles: true}));
+        this.dispatchEvent(new Event('form-json-submit', {bubbles: true}));
       }
     }
 
@@ -465,11 +480,11 @@
       }
 
       if (name === 'action') {
-        this.action = newValue;
+        this._action = newValue;
       }
 
       if (name === 'method') {
-        this.method = newValue;
+        this._method = newValue;
       }
     }
 
