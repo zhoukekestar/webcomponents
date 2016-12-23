@@ -24,3 +24,4 @@
 # Events
 * `form-json-ended` Dispatch if request is successful. You can get `XMLHttpRequest` by `e.target._XMLHttpRequest`
 * `form-json-error` Dispatch if request throw an error. You can get `XMLHttpRequest` by `e.target._XMLHttpRequest`
+* `form-json-submit` Dispatch if we submit form. You can stop submit by a listener for `form-json-submit` on `document.body` and do `e.stopPropagation(); e.preventDefault()`
