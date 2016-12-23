@@ -10,15 +10,15 @@ This component is based on [modules/upload](https://github.com/zhoukekestar/modu
 
 | Name | Detail |
 | --- | --- |
-| data-height | 指定图片高度，如：data-height='100'，指定data-height或data-width后，data-max-height、data-min-width等指定范围的参数将失效 |
+| data-height | 指定图片高度，如：`data-height='100'`，指定`data-height`或`data-width`后<br>`data-max-height`、`data-min-width`等指定范围的参数将失效 |
 | data-width | 指定图片宽度 |
 | data-max-height | 指定最大图片高度，如：`data-max-height='100'` |
 | data-min-height | 指定最小图片高度 |
 | data-max-width | 指定最大图片宽度 |
 | data-min-width | 指定最小图片宽度 |
-| data-max-size | 指定最大文件大小（支持K和M），如：data-max-size='1M'、data-max-size='100K' |
+| data-max-size | 指定最大文件大小（支持K和M），如：`data-max-size='1M'`、`data-max-size='100K'` |
 | data-min-size | 指定最小文件大小 |
-| data-accept | 指定文件类型，如：data-accept='image/gif,image/jpeg' |
+| data-accept | 指定文件类型，如：`data-accept='image/gif,image/jpeg'` |
 | data-multiple | 指定是否支持多图上传 |
 
 
@@ -32,4 +32,4 @@ This component is based on [modules/upload](https://github.com/zhoukekestar/modu
 | onImageSizeError(name, width, height) | 图片尺寸不符合时将调用 |
 
 # Events
-* `upload-file-finished` 文件上传成功后的事件，可以通过`e.target.response`获取response，`e.target.xmlHttp`获取ajax对象
+* `upload-file-ended` 文件上传成功后的事件，`e.target._XMLHttpRequest`获取ajax对象

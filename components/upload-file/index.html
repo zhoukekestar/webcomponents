@@ -345,8 +345,8 @@
 
               (typeof self.onended === 'function') && (self.onended(response, xmlHttp));
               self.response = response;
-              self.xmlHttp = xmlHttp;
-              self.dispatchEvent(new Event('upload-file-finished', {bubbles: true}))
+              self['_XMLHttpRequest'] = xmlHttp;
+              self.dispatchEvent(new Event('upload-file-ended', {bubbles: true}))
             }
           }
 
