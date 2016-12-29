@@ -214,8 +214,7 @@
   /**
   * Stop propagation 'submit' event if necessary before bubbling to `document` node.
   */
-  document.body.addEventListener('submit', function(e) {
-
+  var submitHandler = function(e) {
     var inputs = [].slice.apply(e.target.querySelectorAll('input[is="input-validator"]'));
     var isValid = true;
 
@@ -238,8 +237,10 @@
       e.preventDefault();
       e.stopPropagation();
     }
-
-  });
+  }
+  
+  document.body.addEventListener('form-json-submit', submitHandler);
+  document.body.addEventListener('submit', submitHandler);
 
 
   var proto = Object.create(HTMLInputElement.prototype);
