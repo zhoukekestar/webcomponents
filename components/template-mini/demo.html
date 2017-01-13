@@ -7,21 +7,18 @@
 </head>
 <body>
   <template-mini modal='{"name": "template-mini"}'>
-    <p>{{name}}</p>
+    <h1>{{name}}</h1>
   </template-mini>
   <script>
     var tmpl = document.querySelector('template-mini')
-    // tmpl.modal = {name: 'template-mini'};
-    // This code pdate name as we observe the modal's property.
-    // tmpl.modal.name = 'template-mini2';
-    // This code will update name.
-    // tmpl.modal = {name: 'template-mini2'};
   </script>
 
-  <p>Simple Unit Test is
-    <template-mini modal='{"items": [1, 2, 3, 4, 5, 6, 7, 8]}'>
-      <a href="./test.html" repeat='i in items' style='margin-right: 10px;'>here.</a>
+  <p>
+    Simple Unit Test is
+    <template-mini modal='{"items": [1, 2, 3]}' style='display: inline-block;'>
+      <a href="./test.html" repeat='i in items' style='margin-right: 10px;'> &nbsp;here&nbsp; </a>
     </template-mini>
+    .
   </p>
   <template-mini id='tmplRepeat'>
 
@@ -86,9 +83,21 @@
   <ul>
     <li>
       <h2>repeat</h2>
-      <template-mini modal='{"list": ["a", "b", "c"]}'>
-        <ul repeat='item in list'>
-          <li>{{index}}: {{item}}</li>
+      <template-mini modal='{"list": ["a", "b", "c"], "list2": {"key1": "value1", "key2": "value2", "key3": "value3"}}'>
+        <ul>
+          <li repeat='item in list'>{{item}}</li>
+        </ul>
+        <ul>
+          <li repeat='item, index in list'>{{index}}: {{item}}</li>
+        </ul>
+        <ul>
+          <li repeat='item in list2'>{{item}}</li>
+        </ul>
+        <ul>
+          <li repeat='item, key in list2'>{{key}}: {{item}}</li>
+        </ul>
+        <ul>
+          <li repeat='item, key, index in list2'>{{index}}-{{key}}-{{item}}</li>
         </ul>
       </template-mini>
     </li>
