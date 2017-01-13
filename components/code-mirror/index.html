@@ -84,7 +84,9 @@
 
   }
 
-  var XFooExtended = document.registerElement('code-mirror', {
+  // beforeRegister
+  window.HTMLCodeMirrorElement && window.HTMLCodeMirrorElement.beforeRegister && HTMLCodeMirrorElement.beforeRegister.call(proto);
+  window.HTMLCodeMirrorElement = document.registerElement('code-mirror', {
     prototype: proto,
     extends: 'textarea'
   });

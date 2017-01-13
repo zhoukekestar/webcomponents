@@ -132,7 +132,9 @@
 
     proto.close = proto.hide;
 
-    document.registerElement('modal-js', {
+    // beforeRegister
+    window.HTMLModalJsElement && window.HTMLModalJsElement.beforeRegister && HTMLModalJsElement.beforeRegister.call(proto);
+    window.HTMLModalJsElement = document.registerElement('modal-js', {
       prototype: proto
     })
 

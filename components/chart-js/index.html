@@ -164,7 +164,9 @@
       this.chart.update();
     }
 
-    document.registerElement('chart-js', {
+    // beforeRegister
+    window.HTMLChartJsElement && window.HTMLChartJsElement.beforeRegister && HTMLChartJsElement.beforeRegister.call(proto);
+    window.HTMLChartJsElement = document.registerElement('chart-js', {
       prototype: proto
     })
   })();

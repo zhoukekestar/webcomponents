@@ -356,7 +356,7 @@
         },
         inputID = 'ajaxUpload-' + (Date.now() + indexEle),
         inputEle,
-        url     = self.getAttribute('action') || defaultAction,
+        url     = self.getAttribute('action') || self.defaultAction || defaultAction,
         form    = document.createElement('form');
 
     // Bind current element
@@ -410,6 +410,9 @@
   }
 
   defaultAction = window.HTMLUploadFileElement && window.HTMLUploadFileElement.action;
+
+  // beforeRegister
+  window.HTMLUploadFileElement && window.HTMLUploadFileElement.beforeRegister && HTMLUploadFileElement.beforeRegister.call(proto);
   window.HTMLUploadFileElement =  document.registerElement('upload-file', {
     prototype: proto
   });

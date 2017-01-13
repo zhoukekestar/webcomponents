@@ -238,7 +238,7 @@
       e.stopPropagation();
     }
   }
-  
+
   document.body.addEventListener('form-json-submit', submitHandler);
   document.body.addEventListener('submit', submitHandler);
 
@@ -259,7 +259,9 @@
     })
   }
 
-  document.registerElement('input-validator', {
+  // beforeRegister
+  window.HTMLInputValidatorElement && window.HTMLInputValidatorElement.beforeRegister && HTMLInputValidatorElement.beforeRegister.call(proto);
+  window.HTMLInputValidatorElement = document.registerElement('input-validator', {
     prototype: proto,
     extends: 'input'
   })

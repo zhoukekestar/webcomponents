@@ -39,7 +39,7 @@
 </style>
 <script>
   (function(){
-    
+
     var proto = Object.create(HTMLElement.prototype);
 
     proto.createdCallback = function() {
@@ -61,7 +61,9 @@
       })
     }
 
-    document.registerElement('x-slider', {
+    // beforeRegister
+    window.HTMLXSliderElement && window.HTMLXSliderElement.beforeRegister && HTMLXSliderElement.beforeRegister.call(proto);
+    window.HTMLXSliderElement = document.registerElement('x-slider', {
       prototype: proto
     });
 
