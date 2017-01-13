@@ -1,7 +1,9 @@
 # template-mini
 
 # Install
-`<link rel="import" href="template-mini/index.html">`
+```html
+<link rel="import" href="template-mini/index.html">
+```
 
 # Create
 ```html
@@ -11,14 +13,23 @@
 ```
 
 # Syntax
-* `repeat`. Hidden keys: `_key`, `_index`.
+* `repeat`
 ```html
-<template-mini modal='{"list": ["a", "b", "c"], "list2": {"key1": "value1", "key2": "value2"}}'>
+<template-mini modal='{"list": ["a", "b", "c"], "list2": {"key1": "value1", "key2": "value2", "key3": "value3"}}'>
   <ul>
-    <li repeat='item in list'>{{_index}}: {{item}}</li>
+    <li repeat='item in list'>{{item}}</li>
   </ul>
   <ul>
-    <li repeat='item in list2'>{{_index}}-{{_key}-{{item}}}</li>
+    <li repeat='item, index in list'>{{index}}: {{item}}</li>
+  </ul>
+  <ul>
+    <li repeat='item in list2'>{{item}}</li>
+  </ul>
+  <ul>
+    <li repeat='item, key in list2'>{{key}}: {{item}}</li>
+  </ul>
+  <ul>
+    <li repeat='item, key, index in list2'>{{index}}-{{key}}-{{item}}</li>
   </ul>
 </template-mini>
 ```
@@ -45,9 +56,10 @@
   <img data-src='{{img}}'> // Template-mini will set attribute `src` from attribute `data-src` if `src` is null.
 </template-mini>
 ```
+* [Try it online!](https://zhoukekestar.github.io/webcomponents/components/template-mini/demo.html)
 
 # scripts
-* 'script-before'
+* `script-before`
 ```html
 <template-mini modal='{"time": 1480067606959}'>
   <p>date: {{formatDate(time)}}</p>
@@ -58,7 +70,7 @@
   </script-before>
 </template-mini>
 ```
-* 'script-after'
+* `script-after`
 ```html
 <template-mini>
   <button>sayhi</button>

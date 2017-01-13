@@ -1,4 +1,6 @@
 <!-- Source & Doc @ https://github.com/zhoukekestar/webcomponents/tree/master/components/template-mini -->
+<!-- https://github.com/Polymer/TemplateBinding -->
+<!-- https://github.com/Polymer/TemplateBinding/blob/master/src/TemplateBinding.js -->
 <style>
   template-mini {
     display: none;
@@ -203,9 +205,9 @@
           }
         })
 
-        if (node.nodeName === 'IMG') {
-          node.src = node.src || node.getAttribute('data-src');
-        }
+      }
+      if (node.nodeName === 'IMG') {
+        node.src = node.src || node.getAttribute('data-src');
       }
     }
 
@@ -292,6 +294,15 @@
             items: getExpressionValue(scope, expression[1].trim())
           }
 
+          if (expression.itemName.indexOf(',') !== -1) {
+
+            expression.itemName = expression.itemName.split(',')
+            expression.indexName = (expression.itemName[2] || '').trim()
+            expression.keyName = (expression.itemName[1] || '').trim();
+            expression.itemName = (expression.itemName[0] || '').trim();
+
+          }
+
           // repeat
           var count = 0;
           for (var index in expression.items) {
@@ -302,6 +313,13 @@
 
             // Set new scope
             scope[expression.itemName] = expression.items[index];
+
+            if (expression.indexName) {
+              scope[expression.indexName] = count;
+            }
+            if (expression.keyName) {
+              scope[expression.keyName] = index;
+            }
             scope.index = count; // for older version
             scope._index = count;
             count++;

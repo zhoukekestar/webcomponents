@@ -34,6 +34,15 @@
     <template-mini class='object2'>
       <ul><li repeat='item in items'>{{name0}}<span>{{item.name1}}<span>{{item.name2.name3}}</span></span></li></ul>
     </template-mini>
+    <template-mini class='repeat-array-with-index'>
+      <ul><li repeat='item, myindex in items'>{{myindex}}:{{item}}</li></ul>
+    </template-mini>
+    <template-mini class='repeat-object-with-key'>
+      <ul><li repeat='item, key in items'>{{key}}:{{item}}</li></ul>
+    </template-mini>
+    <template-mini class='repeat-object-with-key-and-index'>
+      <ul><li repeat='item, key, index in items'>{{key}}:{{item}}:{{index}}</li></ul>
+    </template-mini>
   </div>
 
   <div id="if">
@@ -110,6 +119,24 @@
         it("Object Array(Deep set)", function () {
           expect(getHTML('#repeat template-mini.object2', {name0: 'name00', items: [{name1: 'a', name2: {name3: 'aa'}}, {name1: 'b', name2: {name3: 'bb'}}, {name1: 'c', name2: {name3: 'cc'}}]}))
             .to.eql('<ul><li>name00<span>a<span>aa</span></span></li><li>name00<span>b<span>bb</span></span></li><li>name00<span>c<span>cc</span></span></li></ul>')
+        });
+      });
+
+      describe('array-with-index', function () {
+        it("item, index in items", function () {
+          expect(getHTML('#repeat template-mini.repeat-array-with-index', {items: ['a', 'b', 'c']}))
+            .to.eql('<ul><li>0:a</li><li>1:b</li><li>2:c</li></ul>')
+        });
+      });
+
+      describe('object-with-key or index', function () {
+        it("item, key in items", function () {
+          expect(getHTML('#repeat template-mini.repeat-object-with-key', {items: {'a': 'a-value', 'b': 'b-value', 'c': 'c-value'}}))
+            .to.eql('<ul><li>a:a-value</li><li>b:b-value</li><li>c:c-value</li></ul>')
+        });
+        it("item, key, index in items", function () {
+          expect(getHTML('#repeat template-mini.repeat-object-with-key-and-index', {items: {'a': 'a-value', 'b': 'b-value', 'c': 'c-value'}}))
+            .to.eql('<ul><li>a:a-value:0</li><li>b:b-value:1</li><li>c:c-value:2</li></ul>')
         });
       });
     });
