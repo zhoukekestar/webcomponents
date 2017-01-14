@@ -44,6 +44,38 @@ class AppDrawer extends HTMLElement {...}
 window.customElements.define('app-drawer', AppDrawer);
 ```
 
+# Convention
+* Every component **should** call its' `beforeRegister` function before register it to document. And you **should** export it as a global object like "HTML**AbcDef**Element". Here is an example:
+
+```js
+// <hello-world></hello-world>
+!(function() {
+  var proto = Object.create(HTMLElement.prototype)
+  proto.createdCallback  = function() {
+    alert(this.greeting || 'Hello world')
+  }
+  // Call beforeRegister.
+  window.HTMLHelloWorldElement && window.HTMLHelloWorldElement.beforeRegister && HTMLHelloWorldElement.beforeRegister.call(proto);
+  // Export to global scope.
+  window.HTMLHelloWorldElement = document.registerElement('hello-world', {
+    prototype: proto
+  });  
+})();
+
+// So you can do extern thing like:
+// note: you should place this code before linking "hello-world.html" .
+window.HTMLHelloWorldElement = {
+  beforeRegister: function() {
+    // 重写构造函数
+    var _createdCallback = this.createdCallback;
+    this.createdCallback = function() {
+      this.greeting = 'Hello Webcomponents.'
+      _createdCallback.call(this);
+    }
+  }
+}
+```
+
 # Polyfill (For Firefox, IE11)
 * [webcomponentsjs](https://github.com/webcomponents/webcomponentsjs)
 * [Do not use document.currentScript](https://github.com/webcomponents/webcomponentsjs#currentscript), use `(document._currentScript || document.currentScript)` instead.
