@@ -171,7 +171,9 @@
       }
     }
 
-    document.registerElement('template-mini', {
+    // beforeRegister
+    window.HTMLTemplateMiniElement && window.HTMLTemplateMiniElement.beforeRegister && HTMLTemplateMiniElement.beforeRegister.call(proto);
+    window.HTMLTemplateMiniElement = document.registerElement('template-mini', {
       prototype: proto
     });
 
