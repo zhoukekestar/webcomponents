@@ -91,13 +91,13 @@
       var beforeUpdate = this.querySelector('script-before') || this.querySelector('script[type="text/beforeUpdate"]');
       if (beforeUpdate && !this.beforeUpdate) {
         beforeUpdate.remove();
-        this.beforeUpdate = (new Function(beforeUpdate.innerHTML));
+        this.beforeUpdate = (new Function(beforeUpdate.innerText));
       }
 
       var afterUpdate = this.querySelector('script-after') || this.querySelector('script[type="text/afterUpdate"]');
       if (afterUpdate && !this.afterUpdate) {
         afterUpdate.remove();
-        this.afterUpdate = (new Function(afterUpdate.innerHTML)).bind(this);
+        this.afterUpdate = (new Function(afterUpdate.innerText)).bind(this);
       }
 
       this._innerHTML = this.innerHTML;
