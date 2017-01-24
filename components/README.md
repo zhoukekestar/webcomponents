@@ -4,7 +4,8 @@
 ```html
 <chart-js
   labels='["jan", "feb", "mar"]'
-  datasets='[{"label": "first", "data": [56, 4, 89]}, {"label": "second", "data": [89, 60, 12]}, {"label": "third", "data": [50, 80, 50]}, {"label": "4th", "data": [60, 20, 60]}]'></chart-js>
+  datasets='[{"label": "first", "data": [56, 4, 89]}, {"label": "second", "data": [89, 60, 12]}]'>
+</chart-js>
 ```
 
 * [code-mirror Readme.md](https://github.com/zhoukekestar/webcomponents/tree/master/components/code-mirror)
