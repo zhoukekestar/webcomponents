@@ -1,23 +1,7 @@
 
 # WebComponents
-* [template-mini](https://github.com/zhoukekestar/webcomponents/tree/master/components/template-mini)
-```html
-<template-mini modal='{"items": [{"name": "Hello"}, {"name": "World"}]}'>
-  <ul repeat='item in items'>
-    <li>{{item.name}}</li>
-  </ul>
-</template-mini>
-```
-* [form-json](https://github.com/zhoukekestar/webcomponents/tree/master/components/form-json)
-```html
-<form-json action='/api' method='POST'>
-  <input name="key" value="value">
-  <input type='submit' value='submit'>
-<form-json>
-// POST /api
-// {"key": "value"}
-```
-* More components in folder `components`, you can [try it online!](https://zhoukekestar.github.io/webcomponents/)
+* [WebComponents List](https://github.com/zhoukekestar/webcomponents/tree/master/components)
+* You can [try it online!](https://zhoukekestar.github.io/webcomponents/)
 
 
 # Tutorials
@@ -48,31 +32,43 @@ window.customElements.define('app-drawer', AppDrawer);
 * Every component **should** call its' `beforeRegister` function before register it to document. And you **should** export it as a global object like "HTML**AbcDef**Element". Here is an example:
 
 ```js
+
 // <hello-world></hello-world>
+
 !(function() {
+
   var proto = Object.create(HTMLElement.prototype)
+
   proto.createdCallback  = function() {
     alert(this.greeting || 'Hello world')
   }
+
   // Call beforeRegister.
   window.HTMLHelloWorldElement && window.HTMLHelloWorldElement.beforeRegister && HTMLHelloWorldElement.beforeRegister.call(proto);
+
   // Export to global scope.
   window.HTMLHelloWorldElement = document.registerElement('hello-world', {
     prototype: proto
-  });  
+  });
+
 })();
 
 // So you can do extern thing like:
 // note: you should place this code before linking "hello-world.html" .
 window.HTMLHelloWorldElement = {
+
   beforeRegister: function() {
+
     // 重写构造函数
     var _createdCallback = this.createdCallback;
+
     this.createdCallback = function() {
       this.greeting = 'Hello Webcomponents.'
       _createdCallback.call(this);
     }
+    
   }
+
 }
 ```
 
