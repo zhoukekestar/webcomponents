@@ -32,6 +32,14 @@
 </template-mini>
 ```
 
+* [input-validator Readme.md](https://github.com/zhoukekestar/webcomponents/tree/master/components/input-validator)
+* [input-validator Demo](https://zhoukekestar.github.io/webcomponents/components/input-validator/demo.html)
+```html
+<form-json>
+  <input is='input-validator' required msg='{"required": "you forget somthing!"}'>
+</form-json>
+```
+
 <!--
 * [hello-world](https://zhoukekestar.github.io/webcomponents/components/hello-world/demo.html)
 * [hello-world-v1](https://zhoukekestar.github.io/webcomponents/components/hello-world-v1/demo.html), Your Chrome version should be [greater than 54](http://caniuse.com/#search=Custom%20Elements%20v1) as the demo use [Custom Elements v1](https://developers.google.com/web/fundamentals/getting-started/primers/customelements)
@@ -60,6 +68,13 @@
 </template-mini>
 ```
 <!-- * [template-vue](https://zhoukekestar.github.io/webcomponents/components/template-vue/demo.html) -->
+
+
+* [upload-file Readme.md](https://github.com/zhoukekestar/webcomponents/tree/master/components/upload-file)
+<!--* [upload-file Demo](https://zhoukekestar.github.io/webcomponents/components/upload-file/demo.html)-->
+```html
+<upload-file>upload it!</upload-file>
+```
 
 * [x-slider Readme.md](https://github.com/zhoukekestar/webcomponents/tree/master/components/x-slider)
 * [x-slider Demo](https://zhoukekestar.github.io/webcomponents/components/x-slider/demo.html)
