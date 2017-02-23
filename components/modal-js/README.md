@@ -26,6 +26,13 @@
   <button close>close</button>
 </modal-js>
 ```
+* `type=submit` submit form if modal-js has one
+```html
+<modal-js>
+  <form></form>
+  <button type="submit">submit</button>
+</modal-js>
+```
 
 # Methods
 * `hide()` Hide Or Close dialog

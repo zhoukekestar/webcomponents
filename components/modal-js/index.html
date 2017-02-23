@@ -102,10 +102,18 @@
 
       this.addEventListener('click', function(e) {
 
+        // <header><span class='close'></span></header>
         e.target.matches('header .close') && this.hide();
 
+        // button(hide) OR button(close)
         if (e.target.nodeName === 'BUTTON' && (e.target.hasAttribute('close') || e.target.hasAttribute('hide'))) {
           this.hide();
+        }
+
+        // button(type='submit') input(type='submit')
+        if (e.target.getAttribute('type') === 'submit') {
+          var form = this.querySelector('form') || this.querySelector('form-json');
+          form && form.submit();
         }
       });
     }
