@@ -17,12 +17,9 @@
     <button onclick='document.querySelector("#modal-1").show()'>show</button>
 
     <modal-js class='big' id='modal-2'>
-      <template-mini>
-        <header>{{title}}</header>
-        <p>name:{{name}}</p>
-        <p>close it: <button close>close</button></p>
-
-      </template-mini>
+      <header>{{title}}</header>
+      <p>name:{{name}}</p>
+      <p>close it: <button close>close</button></p>
     </modal-js>
     <button onclick='document.querySelector("#modal-2").show({"name": "modal-js", "title": "show with modal"})'>show with modal</button>
   </body>

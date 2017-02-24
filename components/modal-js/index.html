@@ -116,13 +116,19 @@
           form && form.submit();
         }
       });
+
+      var template = this.querySelector('template-mini');
+      if (!template) {
+        this.innerHTML = '<template-mini>' + this.innerHTML + '</template-mini>';
+        template = this.querySelector('template-mini');
+      }
+      this.template = template;
     }
 
     proto.show = function(data) {
 
-      var template = this.querySelector('template-mini');
-      if (template && template.setModal) {
-        template.setModal(data);
+      if (this.template && this.template.setModal) {
+        this.template.setModal(data || {});
       }
 
       this.style.display = 'block';
