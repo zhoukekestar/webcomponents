@@ -42,6 +42,13 @@
       return result.join('&')
     }
 
+    var isNotInMainDocumentBody = function(ele) {
+      var body = ele;
+      while (body.nodeName !== 'BODY') {
+        body = body.parentNode;
+      }
+      return body !== document.body;
+    }
       /**
      * Set obj's value by keys
      * @param  {[object]}           obj   The target you want to set.
@@ -469,7 +476,7 @@
       var inwebcomponents = this.webcomponents || this.inwebcomponents || this.getAttribute('inwebcomponents');
       inwebcomponents = inwebcomponents === '' ? true : inwebcomponents; // <form-json inwebcomponents></form-json>
 
-      if (inwebcomponents) {
+      if (inwebcomponents || isNotInMainDocumentBody(this)) {
         submitListener({target: this, preventDefault: function(){}, stopPropagation: function(){}})
       } else {
         this.dispatchEvent(new Event('form-json-submit', {bubbles: true}));
