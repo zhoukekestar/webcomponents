@@ -32,6 +32,21 @@
 </template-mini>
 ```
 
+* [form-graphql Readme.md](https://github.com/zhoukekestar/webcomponents/tree/master/components/form-graphql)
+```html
+<form-graphql>
+  <code>
+    mutation CreateUser($input: UserInput) {
+      createUser(input: $input) {
+        id
+      }
+    }
+  </code>
+  <input type="text" name='input.name' value='name'>
+  <input type="submit">
+</form-graphql>
+```
+
 * [input-validator Readme.md](https://github.com/zhoukekestar/webcomponents/tree/master/components/input-validator)
 * [input-validator Demo](https://zhoukekestar.github.io/webcomponents/components/input-validator/demo.html)
 ```html
