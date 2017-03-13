@@ -1,4 +1,14 @@
 # WebComponents List
+
+* [address-selector Readme.md](https://github.com/zhoukekestar/webcomponents/tree/master/components/address-selector)
+* [address-selector Demo](https://zhoukekestar.github.io/webcomponents/components/address-selector/demo.html)
+```html
+<address-selector>
+  <select name="province"></select>
+  <select name="city"></select>
+</address-selector>
+```
+
 * [chart-js Readme.md](https://github.com/zhoukekestar/webcomponents/tree/master/components/chart-js)
 * [chart-js Demo](https://zhoukekestar.github.io/webcomponents/components/chart-js/demo.html)
 ```html
