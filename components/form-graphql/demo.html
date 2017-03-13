@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>form graphql demo</title>
+    <script src='../../lib/webcomponentsjs-0.7.23/webcomponents.js'></script>
+
+  </head>
+  <body>
+    <form-graphql template='template-mini' auto>
+      <code>
+        query ($id: Int) {
+          user(id: $id) {
+            id
+            phone
+          }
+        }
+      </code>
+      <input type="text" name='id' value='1'>
+      <input type="submit">
+    </form-graphql>
+    <template-mini>
+      <h1><center>Hello {{data.user.phone}}. </center></h1>
+    </template-mini>
+
+    <form-graphql>
+      <code>
+        mutation CreateAuthority($input: AuthorityInput) {
+          createAuthority(input: $input) {
+            id
+          }
+        }
+      </code>
+      <input type="text" name='input.name' value='name'>
+      <input type="text" name='input.group:number' value='2'>
+      <input type="text" name='input.url' value='url'>
+      <input type="submit">
+    </form-graphql>
+
+    <textarea is='code-mirror' rows="8" cols="40">
+<form-graphql>
+  <code>
+    mutation CreateAuthority($input: AuthorityInput) {
+      createAuthority(input: $input) {
+        id
+      }
+    }
+  </code>
+  <input type="text" name='input.name' value='name'>
+  <input type="text" name='input.group:number' value='2'>
+  <input type="text" name='input.url' value='url'>
+  <input type="submit">
+</form-graphql>
+    </textarea>
+    <p>This is a copy of <a href="https://github.com/zhoukekestar/modules/tree/master/src/formJSON">formJSON</a></p>
+
+    <script>
+      window.HTMLFormGraphqlElement = {
+        beforeRegister: function() {
+          this.action = 'http://local.toomao.com:3016/graphql/';
+          this._beforeSend = function(xhr) {
+            xhr.withCredentials = true
+          }
+        }
+      }
+    </script>
+    <link rel="import" href="../template-mini/index.html">
+    <link rel="import" href="index.html">
+    <link rel="import" href="../code-mirror/index.html">
+  </body>
+</html>
