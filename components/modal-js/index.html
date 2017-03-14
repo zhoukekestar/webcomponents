@@ -112,7 +112,7 @@
 
         // button(type='submit') input(type='submit')
         if (e.target.getAttribute('type') === 'submit') {
-          var form = this.querySelector('form') || this.querySelector('form-json');
+          var form = this.querySelector('form') || this.querySelector('form-json') || this.querySelector('form-graphql');
           form && form.submit();
         }
       });
