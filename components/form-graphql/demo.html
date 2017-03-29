@@ -23,14 +23,7 @@
       <h1><center>Hello {{data.user.phone}}. </center></h1>
     </template-mini>
 
-    <form-graphql>
-      <code>
-        mutation CreateAuthority($input: AuthorityInput) {
-          createAuthority(input: $input) {
-            id
-          }
-        }
-      </code>
+    <form-graphql query='mutation CreateAuthority($input: AuthorityInput) { createAuthority(input: $input) { id } }'>
       <input type="text" name='input.name' value='name'>
       <input type="text" name='input.group:number' value='2'>
       <input type="text" name='input.url' value='url'>

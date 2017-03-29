@@ -509,7 +509,7 @@
     proto.graphql = function (data) {
       var res = {}
         , code = this.querySelector('code');
-      res.query = code && code.innerHTML || '';
+      res.query = this.getAttribute('query') || (code && code.innerHTML) || '';
       res.variables = data;
       res.query = res.query.replace(/\r|\n/g, ' ').replace(/ {2,}/g, ' ');
       // console.log(res)
