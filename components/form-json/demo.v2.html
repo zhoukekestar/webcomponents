@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <scritp src='http://common.toomao.com/v2/polyfill.min.js'></scritp>
+  </head>
+  <body>
+
+    <form action="https://common.toomao.com/empty" method="PUT" enctype="application/json" orderby='element'>
+      <p>Normal String:</p>
+      <input name="str" value="str-abc"/>
+
+      <p>Bool value:</p>
+      <input name="bool:bool" value="false"/><br>
+      <input type='radio' name='active:bool' value='true' checked />
+      <input type='radio' name='active:bool' value='false' />
+
+      <p>Array:</p>
+      <input name="images." value="img1">
+      <input name="images." value="img2">
+
+      <p>Number:</p>
+      <input name="num:number" value="123"/>
+
+      <p>Date:</p>
+      <input type="date" name="date:date" value=""/>
+
+      <p>Deep Set:</p>
+      <input name="deep.a.b.c" value="ccc"><br>
+      <input name="deep2.a.b." value="bb">
+      <input name="deep2.a.b." value="cc"><br>
+      <input name="deep2.a.c:number" value="123654">
+
+      <p>Integer Array:</p>
+      <input name='array.8.8' value='8' />
+      <input name="array.0.a" value="a"><br>
+      <input name="array.0.b" value="b">
+      <input name="array.3.a" value="aa">
+      <input name="array.1.b.1" value="bb1"><br>
+      <input name="array.1.b.3" value="bb3"><br>
+      <input name="array.1.b.2" value="bb2"><br>
+      <input name="array.5" value="55">
+      <input name="array.6." value="61">
+      <input name="array.6." value="62">
+
+      <input type="submit" value="submit it">
+    </form>
+    <script src='./form.v2.js'></script>
+
+    <script>
+      document.body.addEventListener('submit', function(e) {
+        (e.target || e.srcElement).beforeSend = function (xhr) {
+          xhr.setRequestHeader('X-AVOSCloud-Session-Token', 'abc');
+        }
+      })
+      document.body.addEventListener('ended', function (e) {
+        console.log(e, e.detail);
+      })
+    </script>
+  </body>
+</html>
