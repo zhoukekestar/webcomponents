@@ -6,7 +6,7 @@
   <link rel="import" href="index.html">
 </head>
 <body>
-  <template-mini modal='{"name": "template-mini"}'>
+  <template-mini model='{"name": "template-mini"}'>
     <h1>{{name}}</h1>
   </template-mini>
   <script>
@@ -15,7 +15,7 @@
 
   <p>
     Simple Unit Test is
-    <template-mini modal='{"items": [1, 2, 3]}' style='display: inline-block;'>
+    <template-mini model='{"items": [1, 2, 3]}' style='display: inline-block;'>
       <a href="./test.html" repeat='i in items' style='margin-right: 10px;'> &nbsp;here&nbsp; </a>
     </template-mini>
     .
@@ -45,7 +45,7 @@
   <script>
 
     var repeat = function() {
-      tmplRepeat.modal = {
+      tmplRepeat.model = {
         items: ['a', 'b', 'c'],
         items2: [{name: 'name-a'}, {name: 'name-b'}],
         person: {
@@ -72,7 +72,7 @@
     <p elseif='name === "b"'>b is interesting</p>
     <p else>your name is good..</p>
   </template-mini>
-  <button onclick='tmplIf.modal = {show: true, name:"a"}'>tmplIf true</button>
+  <button onclick='tmplIf.model = {show: true, name:"a"}'>tmplIf true</button>
   <button onclick='tmplIf.setModal({show: false, obj: {test: [{enabled: true}]}})'>tmplIf false</button>
   <script>
     var tmplRepeat = document.getElementById('tmplRepeat');
@@ -83,7 +83,7 @@
   <ul>
     <li>
       <h2>repeat</h2>
-      <template-mini modal='{"list": ["a", "b", "c"], "list2": {"key1": "value1", "key2": "value2", "key3": "value3"}}'>
+      <template-mini model='{"list": ["a", "b", "c"], "list2": {"key1": "value1", "key2": "value2", "key3": "value3"}}'>
         <ul>
           <li repeat='item in list'>{{item}}</li>
         </ul>
@@ -103,14 +103,14 @@
     </li>
     <li>
       <h2>if</h2>
-      <template-mini modal='{"show": true}'>
+      <template-mini model='{"show": true}'>
         <p if='show'>Hi</p>
       </template-mini>
     </li>
 
     <li>
       <h2>elseif, else</h2>
-      <template-mini modal='{"num": 3}'>
+      <template-mini model='{"num": 3}'>
         <p if='num === 1'>num is one</p>
         <p elseif='num === 2'>num is two</p>
         <p else>num is greater than two</p>
@@ -118,7 +118,7 @@
     </li>
     <li>
       <h2>beforeUpdate</h2>
-      <template-mini modal='{"time": 1480067606959}' id=abc>
+      <template-mini model='{"time": 1480067606959}' id=abc>
 
         <p>date: {{formatDate(time)}}</p>
         <script-before>
@@ -131,7 +131,7 @@
     </li>
     <li>
       <h2>afterUpdate</h2>
-      <template-mini modal='{}'>
+      <template-mini model='{}'>
         <button>sayhi</button>
         <script-after>
           this.querySelector('button').onclick = function() {
@@ -142,7 +142,7 @@
     </li>
     <li>
       <h2>on(event, selector, callback)</h2>
-      <template-mini id='templateOn' modal='{"list": ["hi1", "hi2", "hi3"]}'>
+      <template-mini id='templateOn' model='{"list": ["hi1", "hi2", "hi3"]}'>
         <a href="javascript:;">say yeah</a>
         <ul>
           <li repeat='li in list' data-msg='{{li}}'><button>say {{li}}</button></li>

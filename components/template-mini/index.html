@@ -71,6 +71,23 @@
         return this._modal;
       }
     })
+
+    // Define watcher for modal property.
+    Object.defineProperty(proto, 'model', {
+      set: function(x) {
+
+        functionalProperties(x, (function(property, val) {
+          // functionalProperties(x);
+          this.setModal();
+        }).bind(this));
+
+        this.setModal(x);
+      },
+      get: function() {
+        return this._modal;
+      }
+    })
+
     // Modal
     proto._modal = '';
 
@@ -106,7 +123,7 @@
         if (this.dataset.modal) {
           this.setModal(JSON.parse(this.dataset.modal))
         } else {
-          var modal = this.getAttribute('modal');
+          var modal = this.getAttribute('model') || this.getAttribute('modal');
           if (modal) {
             this.modal = JSON.parse(modal);
           }
