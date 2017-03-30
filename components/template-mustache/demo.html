@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>demo</title>
+    <link rel="import" href="./template-mustache.html">
+  </head>
+  <body>
+    <template-mustache model='{"name": "World"}'>
+      <p name='{{name}}'>Hello {{ name }}!</p>
+    </template-mustache>
+    <button>Hello Mustache!</button>
+    <script>
+      var tmpl = document.querySelector('template-mustache');
+      document.querySelector('button').onclick = function() {
+        tmpl.model = { name: 'Mustache' };
+        // OR
+        // tmpl.setAttribute('model', JSON.stringify({name: 'Mustache'}));
+      }
+    </script>
+
+    <template-mustache model='{}'>
+      <script-before>
+        this.name = 'script-before';
+      </script-before>
+      <p><span>You can use {{name}}</span> to enhance your template-mustache.</p>
+      <script-after>
+        this.querySelector('span').innerHTML += ' + script-after';
+      </script-after>
+    </template-mustache>
+  </body>
+</html>
