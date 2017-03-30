@@ -4,46 +4,55 @@
 </script>
 <script>
   !(function() {
+    var Mustache = window.Mustache;
     var proto = Object.create(HTMLElement.prototype);
 
     // Define watcher for modal property.
     Object.defineProperty(proto, 'model', {
-      set: function(x) {
-        this._model = x;
+      set: function (x) {
+        this.modelCopy = x;
+
+        // run beforeUpdate script
         this.style.display = 'none';
-        this.beforeUpdate && this.beforeUpdate.call(x, this);
-        this.innerHTML = Mustache.render(this._innerHTML, x);
-        // setTimeout((function() {
-          this.afterUpdate && this.afterUpdate();
-          this.style.display = '';
-        // }).bind(this), 10)
+        if (this.beforeUpdate) this.beforeUpdate.call(x, this);
+
+        // Render html
+        this.innerHTML = Mustache.render(this.innerHTMLCopy, x);
+
+        // run afterupdate script
+        if (this.afterUpdate) this.afterUpdate();
+        this.style.display = '';
       },
-      get: function() {
-        return this._model;
+      get: function () {
+        return this.modelCopy;
       }
-    })
+    });
 
     proto.createdCallback  = function () {
+      var beforeUpdate;
+      var afterUpdate;
+      var model;
+
       this.style.display = 'none';
 
-      var beforeUpdate = this.querySelector('script-before') || this.querySelector('script[type="text/beforeUpdate"]');
+      beforeUpdate = this.querySelector('script-before') || this.querySelector('script[type="text/beforeUpdate"]');
       if (beforeUpdate && !this.beforeUpdate) {
         beforeUpdate.remove();
         this.beforeUpdate = (new Function(beforeUpdate.innerText));
       }
 
-      var afterUpdate = this.querySelector('script-after') || this.querySelector('script[type="text/afterUpdate"]');
+      afterUpdate = this.querySelector('script-after') || this.querySelector('script[type="text/afterUpdate"]');
       if (afterUpdate && !this.afterUpdate) {
         afterUpdate.remove();
         this.afterUpdate = (new Function(afterUpdate.innerText)).bind(this);
       }
 
-      this._innerHTML = this.innerHTML;
+      this.innerHTMLCopy = this.innerHTML;
       Mustache.parse(this.innerHTML);
       this.innerHTML = '';
 
       if (this.hasAttribute('model')) {
-        var model = this.getAttribute('model');
+        model = this.getAttribute('model');
         try {
           model = JSON.parse(model);
         } catch (e) {
@@ -53,11 +62,11 @@
       }
     };
 
-    proto.attributeChangedCallback = function(name, oldValue, newValue) {
+    proto.attributeChangedCallback = function (name, oldValue, newValue) {
       if (name === 'model') {
         this.model = JSON.parse(newValue);
       }
-    }
+    };
 
     document.registerElement('template-mustache', {
       prototype: proto
