@@ -6,6 +6,23 @@
   !(function() {
     var proto = Object.create(HTMLElement.prototype);
 
+    // Define watcher for modal property.
+    Object.defineProperty(proto, 'model', {
+      set: function(x) {
+        this._model = x;
+        this.style.display = 'none';
+        this.beforeUpdate && this.beforeUpdate.call(x, this);
+        this.innerHTML = Mustache.render(this._innerHTML, x);
+        // setTimeout((function() {
+          this.afterUpdate && this.afterUpdate();
+          this.style.display = '';
+        // }).bind(this), 10)
+      },
+      get: function() {
+        return this._model;
+      }
+    })
+
     proto.createdCallback  = function () {
       this.style.display = 'none';
 
@@ -24,23 +41,6 @@
       this._innerHTML = this.innerHTML;
       Mustache.parse(this.innerHTML);
       this.innerHTML = '';
-
-      // Define watcher for modal property.
-      Object.defineProperty(this, 'model', {
-        set: function(x) {
-          this._model = x;
-          this.style.display = 'none';
-          this.beforeUpdate && this.beforeUpdate.call(x, this);
-          this.innerHTML = Mustache.render(this._innerHTML, x);
-          // setTimeout((function() {
-            this.afterUpdate && this.afterUpdate();
-            this.style.display = '';
-          // }).bind(this), 10)
-        },
-        get: function() {
-          return this._model;
-        }
-      })
 
       if (this.hasAttribute('model')) {
         var model = this.getAttribute('model');

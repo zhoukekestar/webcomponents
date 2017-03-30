@@ -86,12 +86,21 @@
 * [template-mini Readme.md](https://github.com/zhoukekestar/webcomponents/tree/master/components/template-mini)
 * [template-mini Demo](https://zhoukekestar.github.io/webcomponents/components/template-mini/demo.html)
 ```html
-<template-mini modal='{"items": [{"name": "Hello"}, {"name": "World"}]}'>
+<template-mini model='{"items": [{"name": "Hello"}, {"name": "World"}]}'>
   <ul repeat='item in items'>
     <li>{{item.name}}</li>
   </ul>
 </template-mini>
 ```
+
+* [template-mustache Readme.md](https://github.com/zhoukekestar/webcomponents/tree/master/components/template-mustache)
+* [template-mustache Demo](https://zhoukekestar.github.io/webcomponents/components/template-mustache/demo.html)
+```html
+<template-mustache model='{"name": "World"}'>
+  <p name='{{name}}'>Hello {{ name }}!</p>
+</template-mustache>
+```
+
 <!-- * [template-vue](https://zhoukekestar.github.io/webcomponents/components/template-vue/demo.html) -->
 
 
