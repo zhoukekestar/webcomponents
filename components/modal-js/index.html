@@ -106,7 +106,7 @@
         e.target.matches('header .close') && this.hide();
 
         // button(hide) OR button(close)
-        if (e.target.nodeName === 'BUTTON' && (e.target.hasAttribute('close') || e.target.hasAttribute('hide'))) {
+        if (e.target.nodeName === 'BUTTON' && (e.target.hasAttribute('close') || e.target.hasAttribute('hide') || e.target.hasAttribute('cancel'))) {
           this.hide();
         }
 
@@ -145,6 +145,7 @@
     }
 
     proto.close = proto.hide;
+    proto.cancel = proto.hide;
 
     // beforeRegister
     window.HTMLModalJsElement && window.HTMLModalJsElement.beforeRegister && HTMLModalJsElement.beforeRegister.call(proto);
