@@ -9,6 +9,7 @@
     display: block;
     background-color: rgba(0, 0, 0, 0.42);
     user-select: none;
+    z-index: 100000;
   }
 
   .system-alert {
@@ -96,9 +97,9 @@
       }
     };
 
-    document.body.appendChild(dialog);
-
     window.alert = function (msg) {
+      if (!resolve) document.body.appendChild(dialog);
+
       dialog.querySelector('.content').innerHTML = msg;
       dialog.style.display = '';
 

@@ -8,12 +8,8 @@
     content: "";
     display: block;
     background-color: rgba(0, 0, 0, 0.42);
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
+    z-index: 100000;
   }
 
   .system-confirm {
@@ -110,9 +106,9 @@
       }
     };
 
-    document.body.appendChild(dialog);
-
     window.confirm = function(msg) {
+      if (!resolve) document.body.appendChild(dialog);
+
       dialog.style.display = '';
       dialog.querySelector('.content').innerHTML = msg;
       return new Promise(function (re) {

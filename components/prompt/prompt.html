@@ -9,6 +9,7 @@
     display: block;
     background-color: rgba(0, 0, 0, 0.42);
     user-select: none;
+    z-index: 100000;
   }
 
   .system-prompt {
@@ -140,9 +141,9 @@
       }
     });
 
-    document.body.appendChild(dialog);
-
     window.prompt = function(msg, defaultText) {
+      if (!resolve) document.body.appendChild(dialog);
+
       dialog.style.display = '';
       dialog.querySelector('.content .message').innerHTML = msg;
       input.value = defaultText || '';
