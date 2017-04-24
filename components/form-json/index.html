@@ -83,42 +83,54 @@
       return deepSet(o, keys, value);
     }
 
-    var integerKeysAsArrayIndexes = function(obj, keys, value) {
+    var findIndex = function (names, keys, property) {
+      return names.findIndex(function (name) {
+        return new RegExp('^' + keys.concat(property).join('\\.')).test(name);
+      });
+    };
 
+    var integerKeysAsArrayIndexes = function (form, obj, keys, value) {
       var allKeysIsInteger = true;
       var arr = [];
       var temp;
+      var properties;
+
       keys = keys || [];
       value = value || obj;
 
+      properties = Object.keys(value);
 
-
-      for (var key in value) {
-
-        temp = keys.concat();
-
-        if (isNaN(+key)) {
-          allKeysIsInteger = false;
-        } else {
-          arr.push(value[key]);
-        }
-        temp.push(key);
-
-        if ((typeof value[key] === 'object') && !Array.isArray(value[key])) {
-          integerKeysAsArrayIndexes(obj, temp, value[key]);
-        }
+      // Sort by element
+      if (form.getAttribute('orderby') === 'element') {
+        properties.sort(function (a, b) {
+          return findIndex(form.names, keys, a) > findIndex(form.names, keys, b);
+        });
       }
 
-      if (allKeysIsInteger) {
+      properties.forEach(function (property) {
+        temp = keys.concat();
 
+        if (isNaN(Number(property))) {
+          allKeysIsInteger = false;
+        } else {
+          arr.push(value[property]);
+        }
+        temp.push(property);
+
+        if ((typeof value[property] === 'object') && !Array.isArray(value[property])) {
+          integerKeysAsArrayIndexes(form, obj, temp, value[property]);
+        }
+      });
+
+      if (allKeysIsInteger) {
         if (keys.length === 0) {
           obj = arr;
         } else {
-          deepSet(obj, keys, arr)
+          deepSet(obj, keys, arr);
         }
       }
       return obj;
-    }
+    };
 
 
 
@@ -148,12 +160,16 @@
         return;
       }
       res = {};
+      self.names = [];
       serializeArray.call(self).forEach(function(t) {
         var keys  = t.name.split('.');
         var len   = keys.length - 1;
         var index = keys[len].indexOf(':');
         var value = t.value;
         var type;
+
+        self.names.push(t.name);
+
         if (index !== -1) {
           type    = keys[len].substr(index + 1);
           keys[len] = keys[len].substr(0, index);
@@ -211,7 +227,7 @@
       });
 
       if (options.parseInteger)
-        res = integerKeysAsArrayIndexes(res);
+        res = integerKeysAsArrayIndexes(self, res);
       res = options.data.call(self, res);
 
       /**
@@ -401,7 +417,19 @@
       if (template) {
         this._template = document.querySelector(template);
         this.onended = function(d) {
-          this._template && this._template.setModal && this._template.setModal(d);
+          if (!this._template) {
+            this._template = document.querySelector(this.dataset.template || this.getAttribute('template'));
+            if (!this._template) {
+              console.warn('no template found');
+              return;
+            }
+          }
+
+          if (this._template.nodeName === 'TEMPLATE-MUSTACHE') {
+            this._template.model = d;
+          } else {
+            this._template && this._template.setModal && this._template.setModal(d);
+          }
         }
       }
 
@@ -478,11 +506,13 @@
       }
     }
 
+    var originalHTMLFormJSONElement = window.HTMLFormJSONElement;
     // before register
     window.HTMLFormJSONElement && window.HTMLFormJSONElement.beforeRegister && HTMLFormJSONElement.beforeRegister.call(proto);
     window.HTMLFormJSONElement = document.registerElement('form-json', {
       prototype: proto
     });
+    Object.assign(window.HTMLFormJSONElement, originalHTMLFormJSONElement);
 
   })();
 

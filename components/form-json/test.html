@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>form json demo</title>
+    <script src='../../lib/webcomponentsjs-0.7.23/webcomponents.js'></script>
+    <link rel="import" href="index.html">
+    <link rel="import" href="../template-mustache/template-mustache.html">
+    <link rel="import" href="../code-mirror/index.html">
+  </head>
+  <body>
+    <form-json action='./demo.json' method='POST' template='template-mustache' orderby='element' auto>
+      <p>Normal String:</p>
+      <input name="str" value="str-abc"/>
+
+      <p>Bool value:</p>
+      <input name="bool:bool" value="false"/><br>
+      <input type='radio' name='active:bool' value='true' checked />
+      <input type='radio' name='active:bool' value='false' />
+
+      <p>Array:</p>
+      <input name="images." value="img1">
+      <input name="images." value="img2">
+
+      <p>Number:</p>
+      <input name="num:number" value="123"/>
+
+      <p>Date:</p>
+      <input type="date" name="date:date" value=""/>
+
+      <p>Deep Set:</p>
+      <input name="deep.a.b.c" value="ccc"><br>
+      <input name="deep2.a.b." value="bb">
+      <input name="deep2.a.b." value="cc"><br>
+      <input name="deep2.a.c:number" value="123654">
+
+      <p>Integer Array:</p>
+      <input name='array.8.8' value='8' />
+      <input name="array.0.a" value="a"><br>
+      <input name="array.0.b" value="b">
+      <input name="array.3.a" value="aa">
+      <input name="array.1.b.1" value="bb1"><br>
+      <input name="array.1.b.3" value="bb3"><br>
+      <input name="array.1.b.2" value="bb2"><br>
+      <input name="array.5" value="55">
+      <input name="array.6." value="61">
+      <input name="array.6." value="62">
+    </form-json>
+    <template-mustache>
+      <h1><center>Hello {{name}}. </center></h1>
+    </template-mustache>
+
+  </body>
+</html>
