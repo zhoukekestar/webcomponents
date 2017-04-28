@@ -86,13 +86,23 @@
 </style>
 
 <script>
-  !(function() {
+  !(function () {
+    var isNotInMainDocumentBody = function (ele) {
+      var body = ele;
+      while (body.nodeName !== 'BODY') {
+        body = body.parentNode;
+      }
+      return body !== document.body;
+    };
+
     var proto = Object.create(HTMLElement.prototype);
 
-    proto.createdCallback = function() {
+    proto.createdCallback = function () {
+      // wrapper dialog with div.modal-js-dialog
       var wrapper = document.createElement('div');
       wrapper.classList.add('modal-js-dialog');
 
+      // We don't use innerHTML, because we want to keep children instead of creating new children.
       while (this.children.length > 0) {
         wrapper.appendChild(this.children[0]);
       }
@@ -100,50 +110,45 @@
       this.appendChild(wrapper);
       this.dialog = wrapper;
 
-      this.addEventListener('click', function(e) {
-
+      // Listener for close element
+      this.addEventListener('click', function (e) {
         // <header><span class='close'></span></header>
-        e.target.matches('header .close') && this.hide();
+        if (e.target.matches('header .close')) this.hide();
 
         // button(hide) OR button(close)
-        if (e.target.nodeName === 'BUTTON' && (e.target.hasAttribute('close') || e.target.hasAttribute('hide') || e.target.hasAttribute('cancel'))) {
+        if (
+            e.target.nodeName === 'BUTTON' &&
+              (
+                e.target.hasAttribute('close') ||
+                e.target.hasAttribute('hide') ||
+                e.target.hasAttribute('cancel')
+              )
+           ) {
           this.hide();
         }
-
-        // button(type='submit') input(type='submit')
-        if (e.target.getAttribute('type') === 'submit') {
-          var form = this.querySelector('form') || this.querySelector('form-json') || this.querySelector('form-graphql');
-          form && form.submit();
-        }
       });
+    };
 
-      var template = this.querySelector('template-mini');
-      if (!template) {
-        this.innerHTML = '<template-mini>' + this.innerHTML + '</template-mini>';
-        template = this.querySelector('template-mini');
-      }
-      this.template = template;
-    }
-
-    proto.show = function(data) {
-
-      if (this.template && this.template.setModal) {
-        this.template.setModal(data || {});
+    proto.show = function () {
+      // Move to mian document if needed
+      if (isNotInMainDocumentBody(this)) {
+        document.body.appendChild(this);
       }
 
       this.style.display = 'block';
-      setTimeout((function() {
+      setTimeout((function () {
         this.classList.add('show');
       }).bind(this), 20);
-    }
+    };
 
-    proto.hide = function() {
+    proto.hide = function () {
       this.classList.remove('show');
-      setTimeout((function() {
+      setTimeout((function () {
         this.style.display = 'none';
       }).bind(this), 500);
-    }
+    };
 
+    // alias
     proto.close = proto.hide;
     proto.cancel = proto.hide;
 
@@ -151,8 +156,6 @@
     window.HTMLModalJsElement && window.HTMLModalJsElement.beforeRegister && HTMLModalJsElement.beforeRegister.call(proto);
     window.HTMLModalJsElement = document.registerElement('modal-js', {
       prototype: proto
-    })
-
-  })();
-
+    });
+  }());
 </script>
