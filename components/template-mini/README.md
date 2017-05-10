@@ -86,48 +86,15 @@
   * [http://stackoverflow.com/questions/40814688/the-way-to-get-full-innerhtml-in-createdcallback-while-it-has-script-tags](http://stackoverflow.com/questions/40814688/the-way-to-get-full-innerhtml-in-createdcallback-while-it-has-script-tags)
   * [https://github.com/skatejs/skatejs/issues/221](https://github.com/skatejs/skatejs/issues/221)
 
-# Attributes
-* `model` The model for template
+# Methods
+* render
 ```html
 <template-mini>
   <p>{{name}}</p>
 </template-mini>
 <script>
   var tmpl = document.querySelector('template-mini')
-  tmpl.model = {name: 'template-mini'};
-  // This code pdate name as we observe the model's property.
-  tmpl.model.name = 'template-mini2';
-
-  // Attention !!! WARNING.
-  // We can't observe a nested object, the code below will not work as expected
-  // tmpl.model.nested.object.name = 'new-value';
-  // We can only observe the model property like:
-  // tmpl.model.nested = {object: {name: 'new-value'}}
-  // OR model object.
-  // tmpl.model = {nested: {object: {name: 'new-value'}}};
-
-  // This code will update name too.
-  // tmpl.model = {name: 'template-mini3'};
-</script>
-```
-
-# Methods
-* on(event, [selector,] callback), `selector` is optional.
-```html
-<template-mini model='{}'>
-  <a href="javascript:;">say yeah</a>
-  <ul>
-    <li data-msg='hi1'><button>say hi1</button></li>
-    <li data-msg='hi2'><button>say hi2</button></li>
-  </ul>
-</template-mini>
-<script>
-  document.querySelector('template-mini').on('click', 'a', function() {
-    alert('yeah')
-  })
-  document.querySelector('template-mini').on('click', 'ul > li', function() {
-    alert(this.dataset.msg)
-  })
+  tmpl.render({name: 'template-mini'});
 </script>
 ```
 
