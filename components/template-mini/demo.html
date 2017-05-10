@@ -72,8 +72,8 @@
     <p elseif='name === "b"'>b is interesting</p>
     <p else>your name is good..</p>
   </template-mini>
-  <button onclick='tmplIf.model = {show: true, name:"a"}'>tmplIf true</button>
-  <button onclick='tmplIf.setModal({show: false, obj: {test: [{enabled: true}]}})'>tmplIf false</button>
+  <button onclick='tmplIf.render({show: true, name:"a"})'>tmplIf true</button>
+  <button onclick='tmplIf.render({show: false, obj: {test: [{enabled: true}]}})'>tmplIf false</button>
   <script>
     var tmplRepeat = document.getElementById('tmplRepeat');
     var tmplIf = document.getElementById('tmplIf');

@@ -64,17 +64,17 @@
      * Set modal and apply it to dom.
      **/
     proto.render = function (d) {
-      this._modal = d || this._modal;
+      this.model = d || this.model;
       this.classList.add('hide');
       this.innerHTML = this._innerHTML;
 
-      this.beforeUpdate && this.beforeUpdate.call(this._modal, this);
+      this.beforeUpdate && this.beforeUpdate.call(this.model, this);
 
       var wrapper = document.createElement('div');
       wrapper.innerHTML = this._innerHTML;
       this._doc = document.createDocumentFragment();
       this._doc.appendChild(wrapper);
-      parseDom(wrapper, this._modal);
+      parseDom(wrapper, this.model);
 
       this.innerHTML = wrapper.innerHTML;
 
@@ -91,26 +91,8 @@
       }
     };
 
-    proto.on = function (event, selector, fn) {
-      if (typeof selector === 'function') {
-        fn = selector;
-        this.addEventListener(event, fn);
-      } else {
-        this.addEventListener(event, function (e) {
-          var target = e.target;
-          while (target !== this && target !== document.body) {
-            if (target.matches && target.matches(selector)) {
-              fn.call(target, e);
-              return;
-            }
-            target = target.parentNode;
-          }
-        });
-      }
-    };
-
     // beforeRegister
-    window.HTMLTemplateMiniElement && window.HTMLTemplateMiniElement.beforeRegister && HTMLTemplateMiniElement.beforeRegister.call(proto);
+    if (window.HTMLTemplateMiniElement && window.HTMLTemplateMiniElement.beforeRegister) HTMLTemplateMiniElement.beforeRegister.call(proto);
     window.HTMLTemplateMiniElement = document.registerElement('template-mini', {
       prototype: proto
     });
