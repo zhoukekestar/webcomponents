@@ -14,90 +14,20 @@
 </style>
 
 <script>
-  !(function(){
-    var proto = Object.create(HTMLElement.prototype)
-      , directives = []
+  !(function () {
+    var proto = Object.create(HTMLElement.prototype),
+      directives = [];
 
     var getExpressionValue = function (scope, expression) {
       return (new Function('with (this) {  return ' + expression + '}')).call(scope);
-    }
-
-
-    // TODO: Observer a nested object
-    var functionalProperty = function(obj, property, setter, getter) {
-      obj._data = obj._data || {};
-      obj._data[property] = obj[property];
-
-      Object.defineProperty(obj, property, {
-        enumerable: true,
-        set: function(x) {
-          this._data[property] = x;
-          setter && setter.call(this, property, x);
-        },
-        get: function() {
-          getter && getter.call(this, property);
-          return this._data[property];
-        }
-      })
-    }
-
-    var functionalProperties = function(obj, setter, getter) {
-      if (typeof obj !== 'object') return;
-
-      for (var i in obj) {
-        if (typeof obj[i] !== 'function' && i !== '_data') {
-          functionalProperty(obj, i, setter, getter)
-
-          // TODO: observer nested object
-          // if (typeof obj[i] === 'object' && !(obj[i] instanceof Array)) {
-          //   functionalProperties(obj[i], setter, getter)
-          // }
-        }
-      }
-    }
-
-    // Define watcher for modal property.
-    Object.defineProperty(proto, 'modal', {
-      set: function(x) {
-
-        functionalProperties(x, (function(property, val) {
-          // functionalProperties(x);
-          this.setModal();
-        }).bind(this));
-
-        this.setModal(x);
-      },
-      get: function() {
-        return this._modal;
-      }
-    })
-
-    // Define watcher for modal property.
-    Object.defineProperty(proto, 'model', {
-      set: function(x) {
-
-        functionalProperties(x, (function(property, val) {
-          // functionalProperties(x);
-          this.setModal();
-        }).bind(this));
-
-        this.setModal(x);
-      },
-      get: function() {
-        return this._modal;
-      }
-    })
-
-    // Modal
-    proto._modal = '';
+    };
 
     /*
      * Save innerHTML to _innerHTML
      * https://bugs.chromium.org/p/chromium/issues/detail?id=502872
      */
     // proto.attachedCallback  = function() {
-    proto.createdCallback  = function() {
-
+    proto.createdCallback = function () {
       this.classList.add('hide');
       this.setAttribute('resolved', '');
 
@@ -120,26 +50,20 @@
       this._innerHTML = this.innerHTML;
 
       try {
-        if (this.dataset.modal) {
-          this.setModal(JSON.parse(this.dataset.modal))
-        } else {
-          var modal = this.getAttribute('model') || this.getAttribute('modal');
-          if (modal) {
-            this.modal = JSON.parse(modal);
-          }
+        var modal = this.getAttribute('model');
+        if (modal) {
+          this.render(JSON.parse(modal));
         }
       } catch (e) {
-        console.warn(this)
-        console.error(e)
+        console.warn(this);
+        console.error(e);
       }
-
-    }
+    };
 
     /**
      * Set modal and apply it to dom.
      **/
-    proto.setModal = function(d, callback) {
-
+    proto.render = function (d) {
       this._modal = d || this._modal;
       this.classList.add('hide');
       this.innerHTML = this._innerHTML;
@@ -154,28 +78,25 @@
 
       this.innerHTML = wrapper.innerHTML;
 
-      this.dispatchEvent(new Event('template-mini-updated', {bubbles: true}));
-      setTimeout((function() {
+      this.dispatchEvent(new Event('template-mini-updated', { bubbles: true }));
+      setTimeout((function () {
         this.afterUpdate && this.afterUpdate();
-        callback && callback();
-      }).bind(this), 100)
-      this.classList.remove('hide')
+      }).bind(this), 100);
+      this.classList.remove('hide');
+    };
 
-    }
-
-    proto.attributeChangedCallback = function(name, oldValue, newValue) {
-      if (name === 'modal') {
-        this.setModal(JSON.parse(newValue));
+    proto.attributeChangedCallback = function (name, oldValue, newValue) {
+      if (name === 'model') {
+        this.render(JSON.parse(newValue));
       }
-    }
+    };
 
-    proto.on = function(event, selector, fn) {
-
+    proto.on = function (event, selector, fn) {
       if (typeof selector === 'function') {
         fn = selector;
         this.addEventListener(event, fn);
       } else {
-        this.addEventListener(event, function(e) {
+        this.addEventListener(event, function (e) {
           var target = e.target;
           while (target !== this && target !== document.body) {
             if (target.matches && target.matches(selector)) {
@@ -184,9 +105,9 @@
             }
             target = target.parentNode;
           }
-        })
+        });
       }
-    }
+    };
 
     // beforeRegister
     window.HTMLTemplateMiniElement && window.HTMLTemplateMiniElement.beforeRegister && HTMLTemplateMiniElement.beforeRegister.call(proto);
@@ -199,47 +120,46 @@
     *   You should not remove node in your directive handler, because the (children.length) will be (children.length - 1) if you remove it.
     *   So we have a _remove flag to remove it after index the children.
     */
-    var removeTaggedChildren = function(node) {
+    var removeTaggedChildren = function (node) {
       for (var i = node.children.length - 1; i >= 0; i--) {
         if (node.children[i]._remove === true) {
           node.children[i].remove();
         }
       }
-    }
+    };
 
     // parse expression in attributes
-    var parseDomAttribute = function(node, scope) {
+    var parseDomAttribute = function (node, scope) {
       if (node._remove === true) {
         return;
       }
 
       for (var i = 0; i < node.attributes.length; i++) {
-
-        node.attributes[i].value = node.attributes[i].value.replace(/{{(.*?)}}/g, function() {
+        node.attributes[i].value = node.attributes[i].value.replace(/{{(.*?)}}/g, function () {
           try {
             return getExpressionValue(scope, arguments[1]);
           } catch (e) {
             console.warn(e);
             return '';
           }
-        })
-
+        });
       }
       if (node.nodeName === 'IMG') {
         node.src = node.src || node.getAttribute('data-src');
       }
-    }
+    };
 
     /**
      * Parse dom
      *  dom: the dom you want to parse
      *  scope: the data that will be used if some value shold be parsed
      **/
-    var parseDom = function(dom, scope) {
+    var parseDom = function (dom, scope) {
       try {
         for (var i = 0; i < dom.childNodes.length; i++) {
-
           var currentNode = dom.childNodes[i];
+
+          if (currentNode.nodeName === 'TEMPLATE-MINI') continue;
 
           // Ignore comment
           if (currentNode.nodeName === '#comment') {
@@ -247,14 +167,14 @@
           }
 
           if (currentNode.nodeName === '#text') {
-            currentNode.textContent = currentNode.textContent.replace(/{{(.*?)}}/g, function() {
+            currentNode.textContent = currentNode.textContent.replace(/{{(.*?)}}/g, function () {
               try {
                 return getExpressionValue(scope, arguments[1]);
               } catch (e) {
                 console.warn(e);
                 return '';
               }
-            })
+            });
             continue;
           }
 
@@ -263,13 +183,12 @@
 
           // Execute directives
           for (var j = 0; j < directives.length; j++) {
-
             var currentDirective = directives[j].name;
             var expression = currentNode.getAttribute(currentDirective);
 
             // Get current expression
             if (expression !== null) {
-              parseChildren = parseChildren && directives[j].parseChildren === false ? false : true;
+              parseChildren = !(parseChildren && directives[j].parseChildren === false);
               directives[j].handler(currentNode, expression, scope);
             }
           }
@@ -287,19 +206,18 @@
 
         return dom;
       } catch (e) {
-        console.error(e)
+        console.error(e);
       }
-    }
+    };
 
 
     // Directives: repeat
     directives.push({
       name: 'repeat',
       parseChildren: false,
-      handler: function(dom, expression, scope) {
+      handler: function (dom, expression, scope) {
         try {
-
-          // Get parentNode, return if parent is null
+        // Get parentNode, return if parent is null
           var parent = dom.parentNode;
           if (!parent) return;
 
@@ -311,22 +229,19 @@
           expression = {
             itemName: expression[0].trim(),
             items: getExpressionValue(scope, expression[1].trim())
-          }
+          };
 
           if (expression.itemName.indexOf(',') !== -1) {
-
-            expression.itemName = expression.itemName.split(',')
-            expression.indexName = (expression.itemName[2] || '').trim()
+            expression.itemName = expression.itemName.split(',');
+            expression.indexName = (expression.itemName[2] || '').trim();
             expression.keyName = (expression.itemName[1] || '').trim();
             expression.itemName = (expression.itemName[0] || '').trim();
-
           }
 
           // repeat
           var count = 0;
           for (var index in expression.items) {
-
-            // Clone template node
+          // Clone template node
             var cloneNode = dom.cloneNode(true);
             cloneNode.removeAttribute('repeat');
 
@@ -345,26 +260,24 @@
             scope._key = index;
 
             // Append new parsed dom
-            parent.appendChild(parseDom(cloneNode, scope))
+            parent.appendChild(parseDom(cloneNode, scope));
           }
 
           delete scope.index;
           delete scope._index;
           delete scope._key;
           delete scope[expression.itemName];
-
         } catch (e) {
           console.warn('repeat ERROR:' + e);
           console.warn(dom);
         }
-
       }
-    })
+    });
 
     // Directives: if
     directives.push({
       name: 'if',
-      handler: function(dom, expression, scope) {
+      handler: function (dom, expression, scope) {
         var value = null;
 
         try {
@@ -385,12 +298,12 @@
         dom._ifarr = [false];
         return false;
       }
-    })
+    });
 
     // Directives: elseif
     directives.push({
       name: 'elseif',
-      handler: function(dom, expression, scope) {
+      handler: function (dom, expression, scope) {
         var value = null;
         var prev = dom.previousElementSibling;
 
@@ -411,12 +324,12 @@
           value = getExpressionValue(scope, expression);
         } catch (e) {
           console.warn('elseif ERROR:' + e + ' on dom:');
-          console.warn(dom)
+          console.warn(dom);
         }
 
         if (value) {
           dom.removeAttribute('elseif');
-          prev && prev._ifarr && (dom._ifarr = prev._ifarr) && dom._ifarr.push(true) ;
+          prev && prev._ifarr && (dom._ifarr = prev._ifarr) && dom._ifarr.push(true);
           dom._if = true;
           return true;
         }
@@ -430,7 +343,7 @@
     // Directives: else
     directives.push({
       name: 'else',
-      handler: function(dom, expression, scope) {
+      handler: function (dom, expression, scope) {
         var prev = dom.previousElementSibling;
         if (prev && prev._ifarr) {
           for (var i = 0; i < prev._ifarr.length; i++) {
@@ -446,10 +359,9 @@
 
         dom._if = true;
         prev && prev._ifarr && (dom._ifarr = prev._ifarr) && dom._ifarr.push(true);
-        dom.removeAttribute('else')
+        dom.removeAttribute('else');
         return true;
       }
     });
-
-  })();
+}());
 </script>

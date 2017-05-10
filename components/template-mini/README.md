@@ -15,7 +15,7 @@
 # Syntax
 * `repeat`
 ```html
-<template-mini modal='{"list": ["a", "b", "c"], "list2": {"key1": "value1", "key2": "value2", "key3": "value3"}}'>
+<template-mini model='{"list": ["a", "b", "c"], "list2": {"key1": "value1", "key2": "value2", "key3": "value3"}}'>
   <ul>
     <li repeat='item in list'>{{item}}</li>
   </ul>
@@ -35,14 +35,14 @@
 ```
 * `if`
 ```html
-<template-mini modal='{"show": true}'>
+<template-mini model='{"show": true}'>
   <p if='show'>Hi</p>
 </template-mini>
 ```
 
 * `elseif`, `else`
 ```html
-<template-mini modal='{"num": 1}'>
+<template-mini model='{"num": 1}'>
   <p if='num === 1'>num is one</p>
   <p elseif='num === 2'>num is two</p>
   <p else>num is greater than two</p>
@@ -61,7 +61,7 @@
 # scripts
 * `script-before`
 ```html
-<template-mini modal='{"time": 1480067606959}'>
+<template-mini model='{"time": 1480067606959}'>
   <p>date: {{formatDate(time)}}</p>
   <script-before>
     this.formatDate = function(num) {
@@ -87,34 +87,34 @@
   * [https://github.com/skatejs/skatejs/issues/221](https://github.com/skatejs/skatejs/issues/221)
 
 # Attributes
-* `modal` The modal for template
+* `model` The model for template
 ```html
 <template-mini>
   <p>{{name}}</p>
 </template-mini>
 <script>
   var tmpl = document.querySelector('template-mini')
-  tmpl.modal = {name: 'template-mini'};
-  // This code pdate name as we observe the modal's property.
-  tmpl.modal.name = 'template-mini2';
+  tmpl.model = {name: 'template-mini'};
+  // This code pdate name as we observe the model's property.
+  tmpl.model.name = 'template-mini2';
 
   // Attention !!! WARNING.
   // We can't observe a nested object, the code below will not work as expected
-  // tmpl.modal.nested.object.name = 'new-value';
-  // We can only observe the modal property like:
-  // tmpl.modal.nested = {object: {name: 'new-value'}}
-  // OR modal object.
-  // tmpl.modal = {nested: {object: {name: 'new-value'}}};
+  // tmpl.model.nested.object.name = 'new-value';
+  // We can only observe the model property like:
+  // tmpl.model.nested = {object: {name: 'new-value'}}
+  // OR model object.
+  // tmpl.model = {nested: {object: {name: 'new-value'}}};
 
   // This code will update name too.
-  // tmpl.modal = {name: 'template-mini3'};
+  // tmpl.model = {name: 'template-mini3'};
 </script>
 ```
 
 # Methods
 * on(event, [selector,] callback), `selector` is optional.
 ```html
-<template-mini modal='{}'>
+<template-mini model='{}'>
   <a href="javascript:;">say yeah</a>
   <ul>
     <li data-msg='hi1'><button>say hi1</button></li>

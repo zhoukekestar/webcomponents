@@ -4,7 +4,7 @@
   <title>Mocha Tests</title>
   <script src='../../lib/webcomponentsjs-0.7.23/webcomponents.js'></script>
   <link href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css" rel="stylesheet" />
-  <link rel="import" href="index.html">
+  <link rel="import" href="template-mini.html">
   <style>
     body template-mini {
       display: none !important;
@@ -82,16 +82,25 @@
     </template-mini>
   </div>
 
+  <div id="others">
+    <template-mini class='nested-template-mini'>
+      <p>hello {{name}}</p>
+      <template-mini>
+        <p>hello {{name}}</p>
+      </template-mini>
+    </template-mini>
+  </div>
+
   <script>mocha.setup('bdd')</script>
   <script>
     var describe = window.describe
       , it = window.it
       , expect = window.expect;
 
-    var getHTML = function(selector, modal) {
+    var render = function(selector, modal) {
       var dom = document.querySelector(selector);
-      dom.setModal(modal);
-      return dom.innerHTML.trim();
+      dom.render(modal);
+      return dom.innerHTML.trim().replace(/\s{2,}/g, ' ');
     }
   </script>
   <script>
@@ -99,43 +108,43 @@
       describe('Simple Array', function () {
         it("{items: ['a', 'b', 'c']}", function () {
 
-          expect(getHTML('#repeat template-mini.simple', {items: ['a', 'b', 'c']}))
+          expect(render('#repeat template-mini.simple', {items: ['a', 'b', 'c']}))
             .to.eql('<ul><li>a</li><li>b</li><li>c</li></ul>')
         });
       });
       describe('index', function () {
         it("index should be start with 0", function () {
 
-          expect(getHTML('#repeat template-mini.index', {items: ['a', 'b', 'c']}))
+          expect(render('#repeat template-mini.index', {items: ['a', 'b', 'c']}))
             .to.eql('<ul><li>0</li><li>1</li><li>2</li></ul>')
         });
       });
       describe('Object Array', function () {
         it("Simple Object Array.", function () {
 
-          expect(getHTML('#repeat template-mini.object', {items: [{name: 'a'}, {name: 'b'}, {name: 'c'}]}))
+          expect(render('#repeat template-mini.object', {items: [{name: 'a'}, {name: 'b'}, {name: 'c'}]}))
             .to.eql('<ul><li>a</li><li>b</li><li>c</li></ul>')
         });
         it("Object Array(Deep set)", function () {
-          expect(getHTML('#repeat template-mini.object2', {name0: 'name00', items: [{name1: 'a', name2: {name3: 'aa'}}, {name1: 'b', name2: {name3: 'bb'}}, {name1: 'c', name2: {name3: 'cc'}}]}))
+          expect(render('#repeat template-mini.object2', {name0: 'name00', items: [{name1: 'a', name2: {name3: 'aa'}}, {name1: 'b', name2: {name3: 'bb'}}, {name1: 'c', name2: {name3: 'cc'}}]}))
             .to.eql('<ul><li>name00<span>a<span>aa</span></span></li><li>name00<span>b<span>bb</span></span></li><li>name00<span>c<span>cc</span></span></li></ul>')
         });
       });
 
       describe('array-with-index', function () {
         it("item, index in items", function () {
-          expect(getHTML('#repeat template-mini.repeat-array-with-index', {items: ['a', 'b', 'c']}))
+          expect(render('#repeat template-mini.repeat-array-with-index', {items: ['a', 'b', 'c']}))
             .to.eql('<ul><li>0:a</li><li>1:b</li><li>2:c</li></ul>')
         });
       });
 
       describe('object-with-key or index', function () {
         it("item, key in items", function () {
-          expect(getHTML('#repeat template-mini.repeat-object-with-key', {items: {'a': 'a-value', 'b': 'b-value', 'c': 'c-value'}}))
+          expect(render('#repeat template-mini.repeat-object-with-key', {items: {'a': 'a-value', 'b': 'b-value', 'c': 'c-value'}}))
             .to.eql('<ul><li>a:a-value</li><li>b:b-value</li><li>c:c-value</li></ul>')
         });
         it("item, key, index in items", function () {
-          expect(getHTML('#repeat template-mini.repeat-object-with-key-and-index', {items: {'a': 'a-value', 'b': 'b-value', 'c': 'c-value'}}))
+          expect(render('#repeat template-mini.repeat-object-with-key-and-index', {items: {'a': 'a-value', 'b': 'b-value', 'c': 'c-value'}}))
             .to.eql('<ul><li>a:a-value:0</li><li>b:b-value:1</li><li>c:c-value:2</li></ul>')
         });
       });
@@ -148,76 +157,84 @@
 
       describe("if", function() {
         it('Simple if', function() {
-          expect(getHTML('#if .if', {show: true}))
+          expect(render('#if .if', {show: true}))
             .to.eql('<span>show</span>')
 
-          expect(getHTML('#if .if', {show: false}))
+          expect(render('#if .if', {show: false}))
             .to.eql('')
 
-          expect(getHTML('#if .if', {}))
+          expect(render('#if .if', {}))
             .to.eql('')
 
         })
 
         it('deep-if', function() {
 
-          expect(getHTML('#if .if-deep', {show: {arr: [{}, {isTrue: true}]}}))
+          expect(render('#if .if-deep', {show: {arr: [{}, {isTrue: true}]}}))
             .to.eql('<span>show</span>')
 
-          expect(getHTML('#if .if-deep', {show: {arr: [{}, {isTrue: false}]}}))
+          expect(render('#if .if-deep', {show: {arr: [{}, {isTrue: false}]}}))
             .to.eql('')
 
-          expect(getHTML('#if .if-deep', {}))
+          expect(render('#if .if-deep', {}))
             .to.eql('')
         })
 
         it('if-expression', function() {
 
-          expect(getHTML('#if .if-expression1', {}))
+          expect(render('#if .if-expression1', {}))
             .to.eql('<span>true</span>')
 
-          expect(getHTML('#if .if-expression2', {}))
+          expect(render('#if .if-expression2', {}))
             .to.eql('<span>false</span>')
         })
       })
 
       describe('else', function() {
         it('Simple else', function() {
-          expect(getHTML('#if .else', {show: true}))
+          expect(render('#if .else', {show: true}))
             .to.eql('<span>show is true</span>')
 
-          expect(getHTML('#if .else', {show: false}))
+          expect(render('#if .else', {show: false}))
             .to.eql('<span>show is false</span>')
         })
       })
 
       describe('elseif', function() {
         it('different name', function() {
-          expect(getHTML('#if .elseif', {name: 'a'}))
+          expect(render('#if .elseif', {name: 'a'}))
             .to.eql('<span>name is a</span>')
 
-          expect(getHTML('#if .elseif', {name: 'b'}))
+          expect(render('#if .elseif', {name: 'b'}))
             .to.eql('<span>name is b</span>')
 
-          expect(getHTML('#if .elseif', {name: 'c'}))
+          expect(render('#if .elseif', {name: 'c'}))
             .to.eql('<span>name is else</span>')
         })
         it('if-else-if', function() {
 
-          expect(getHTML('#if .if-else-if', {show: true}))
-            .to.eql('<span>show</span>\n      \n      \n      <span>name is null</span>')
+          expect(render('#if .if-else-if', {show: true}))
+            .to.eql('<span>show</span> <span>name is null</span>')
 
-          expect(getHTML('#if .if-else-if', {show: false}))
-            .to.eql('<span>!show</span>\n      \n      <span>name is null</span>')
+          expect(render('#if .if-else-if', {show: false}))
+            .to.eql('<span>!show</span> <span>name is null</span>')
 
-          expect(getHTML('#if .if-else-if', {show: true, name: 'a'}))
-            .to.eql('<span>show</span>\n      \n      <span>a</span>')
+          expect(render('#if .if-else-if', {show: true, name: 'a'}))
+            .to.eql('<span>show</span> <span>a</span>')
 
-          expect(getHTML('#if .if-else-if', {show: false, name: 'a'}))
-            .to.eql('<span>!show</span>\n      <span>a</span>')
+          expect(render('#if .if-else-if', {show: false, name: 'a'}))
+            .to.eql('<span>!show</span> <span>a</span>')
 
         })
 
+      })
+    })
+  </script>
+  <script>
+    describe('others', function () {
+      it('nested tempalte-mini', function () {
+        expect(render('#others .nested-template-mini', {name: 'a'}))
+          .to.eql('<p>hello a</p> <template-mini class="hide" resolved=""> <p>hello {{name}}</p> </template-mini>');
       })
     })
   </script>
