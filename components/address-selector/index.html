@@ -121,6 +121,10 @@
       var eles = this.querySelectorAll('select');
       var selected = this.getAttribute('selected') || '[]';
 
+      for (var i = 0; i < eles.length; i++) {
+        eles[i].innerHTML = '';
+      }
+
       initCitySelect({
         eles: eles,
         data: cityData
