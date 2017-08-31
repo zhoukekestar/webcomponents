@@ -1,0 +1,46 @@
+<script src='//cdn.bootcss.com/handlebars.js/4.0.6/handlebars.min.js'></script>
+<script>
+  !(function() {
+    var Handlebars = window.Handlebars;
+    var proto = Object.create(HTMLElement.prototype);
+
+
+    proto.createdCallback  = function () {
+      var beforeUpdate;
+      var afterUpdate;
+      var model;
+
+      this.style.display = 'none';
+
+      beforeUpdate = this.querySelector('script-before') || this.querySelector('script[type="text/beforeUpdate"]');
+      if (beforeUpdate && !this.beforeUpdate) {
+        beforeUpdate.remove();
+        this.beforeUpdate = (new Function(beforeUpdate.innerText));
+      }
+
+      afterUpdate = this.querySelector('script-after') || this.querySelector('script[type="text/afterUpdate"]');
+      if (afterUpdate && !this.afterUpdate) {
+        afterUpdate.remove();
+        this.afterUpdate = (new Function(afterUpdate.innerText)).bind(this);
+      }
+
+      this.innerHTMLCopy = this.innerHTML;
+      this.template = Handlebars.compile(this.innerHTML)
+      this.innerHTML = '';
+
+      if (this.hasAttribute('model')) {
+        model = this.getAttribute('model');
+        try {
+          model = JSON.parse(model);
+        } catch (e) {
+          console.error('template-handlebars JSON parse Error: ', e);
+        }
+        this.model = model;
+      }
+    };
+
+    document.registerElement('template-handlebars', {
+      prototype: proto
+    });
+  })();
+</script>
