@@ -1,0 +1,153 @@
+<script src='//cdn.bootcss.com/Chart.js/2.4.0/Chart.min.js'></script>
+<script>
+  const symbolLabels = Symbol();
+  const symbolDatasets = Symbol();
+  const symbolType = Symbol();
+  const TYPE = {
+    STRING: 0,
+    JSON: 1,
+  };
+
+  const lineStyles = [
+    {
+      fill: false,
+      strokeColor: "rgba(151,187,205,1)",
+      pointColor: "rgba(151,187,205,1)",
+      pointStrokeColor: "#fff",
+      pointHighlightFill: "#fff",
+      pointHighlightStroke: "rgba(151,187,205,1)",
+    },
+    {
+      fill: false,
+      backgroundColor: "rgba(255,99,132,0.2)",
+      borderColor: "rgba(255,99,132,1)",
+      pointBackgroundColor: "rgba(255,99,132,1)",
+      pointBorderColor: "#fff",
+      pointHoverBackgroundColor: "#fff",
+      pointHoverBorderColor: "rgba(255,99,132,1)",
+    },
+    {
+      fill: false,
+      backgroundColor: "rgba(225,206,86,0.2)",
+      borderColor: "rgba(225,206,86,1)",
+      pointBackgroundColor: "rgba(225,206,86,1)",
+      pointBorderColor: "#fff",
+      pointHoverBackgroundColor: "#fff",
+      pointHoverBorderColor: "rgba(225,206,86,1)",
+    },
+    {
+      fill: false,
+      backgroundColor: "rgba(54,162,235,0.2)",
+      borderColor: "rgba(54,162,235,1)",
+      pointBackgroundColor: "rgba(54,162,235,1)",
+      pointBorderColor: "#fff",
+      pointHoverBackgroundColor: "#fff",
+      pointHoverBorderColor: "rgba(54,162,235,1)",
+    },
+  ];
+
+  const getLineStyle = n => {
+    n %= 3;
+    return JSON.parse(JSON.stringify(lineStyles[n])); // return a copy of style, not just reference.
+  }
+
+  class ChartJs extends HTMLElement {
+    constructor() {
+      super();
+      const wrapper = document.createElement('div');
+      const canvas = document.createElement('canvas');
+      canvas.style.display = 'block';
+      wrapper.appendChild(canvas);
+      this.appendChild(wrapper)
+      this.canvas = canvas;
+
+      this.initAttribute('labels', TYPE.JSON);
+      this.initAttribute('type', TYPE.STRING);
+      this.initAttribute('datasets', TYPE.JSON);
+
+      this.type = this.type || 'line';
+    }
+
+    initAttribute(name, type) {
+      try {
+        if (this.hasAttribute(name)) {
+          const value = type === TYPE.JSON ? JSON.parse(this.getAttribute(name)) : this.getAttribute(name);
+          this[name] = value;
+        }
+      } catch (e) {
+        console.warn(e);
+        // console.warn(`ChartJs attr: ${name} value: ${this.getAttribute(name)} is not a valid value.`);
+      }
+    }
+
+    render() {
+      if (!this.datasets || !this.type || !this.labels) return;
+
+      if (!this.chart) {
+        this.chart = new Chart(this.canvas.getContext('2d'), {
+          type: this.type,
+          data: {
+            labels: this.labels,
+            datasets: this.datasets.map((data, index) => Object.assign(getLineStyle(index), data)),
+          },
+          // options: options,
+        });
+      } else {
+        this.chart.type = this.type;
+        this.chart.data.labels = this.labels;
+        this.chart.data.datasets = this.datasets.map((data, index) => Object.assign(getLineStyle(index), data));
+        this.chart.update();
+      }
+    }
+
+    // labels
+    set labels(val) {
+      this[symbolLabels] = val;
+      this.render();
+    }
+
+    get labels() {
+      return this[symbolLabels];
+    }
+
+    // Type
+    set type(val) {
+      this[symbolType] = val;
+      this.render();
+    }
+
+    get type() {
+      return this[symbolType];
+    }
+
+    // datasets
+    set datasets(val) {
+      this[symbolDatasets] = val;
+      this.render();
+    }
+
+    get datasets() {
+      return this[symbolDatasets];
+    }
+  }
+
+  customElements.define('chart-js', ChartJs);
+
+
+
+  var applyStyle = function(data) {
+
+    var datasets = data.datasets;
+    if (!datasets) return;
+
+    for (var i = 0; i < datasets.length; i++) {
+      var config = getLineStyle(i);
+      for (var k in datasets[i]) {
+        config[k] = datasets[i][k]
+      }
+      datasets[i] = config;
+    }
+
+    return data;
+  }
+</script>
