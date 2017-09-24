@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>demo</title>
+    <link rel="import" href="./template-handlebars.html">
+  </head>
+  <body>
+    <template-handlebars model='{"name": "World"}'>
+      <p name='{{name}}'>Hello {{ name }}!</p>
+    </template-handlebars>
+    <button>Hello Handlebars!</button>
+    <script>
+      var tmpl = document.querySelector('template-handlebars');
+      document.querySelector('button').onclick = function() {
+        tmpl.model = { name: 'Handlebars' };
+        // OR
+        // tmpl.setAttribute('model', JSON.stringify({name: 'Handlebars'}));
+      }
+    </script>
+
+    <template-handlebars model='{}'>
+      <script-before>
+        this.name = 'script-before';
+      </script-before>
+      <p><span>You can use {{name}}</span> to enhance your template-handlebars.</p>
+      <script-after>
+        this.querySelector('span').innerHTML += ' + script-after';
+      </script-after>
+    </template-handlebars>
+  </body>
+</html>
