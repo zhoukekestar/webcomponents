@@ -47,7 +47,7 @@
   ];
 
   const getLineStyle = n => {
-    n %= 3;
+    n %= 4;
     return JSON.parse(JSON.stringify(lineStyles[n])); // return a copy of style, not just reference.
   }
 
@@ -98,6 +98,17 @@
         this.chart.data.datasets = this.datasets.map((data, index) => Object.assign(getLineStyle(index), data));
         this.chart.update();
       }
+    }
+
+    // [{name: '2017-08', value: 80}, {name: '2017-09', value: 90}]
+    singleLine(arr, name = '数据') {
+      this.labels = arr.map(d => d.name);
+      this.datasets = [
+        {
+          label: name,
+          data: arr.map(d => d.value),
+        }
+      ];
     }
 
     // labels
